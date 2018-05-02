@@ -61,24 +61,30 @@ endif()
 
 if(NOT CMAKE_SYSTEM_NAME MATCHES Emscripten AND NOT ANDROID)
   if(OSSIA_PROTOCOL_MIDI)
-    message(STATUS "Update OSSIA Midi Protocol dependency : ModernMIDI")
-    execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/ModernMIDI
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    if(OSSIA_SUBMODULE_AUTOUPDATE)
+      message(STATUS "Update OSSIA Midi Protocol dependency : ModernMIDI")
+      execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/ModernMIDI
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
     add_subdirectory("${OSSIA_3RDPARTY_FOLDER}/ModernMIDI" EXCLUDE_FROM_ALL)
   endif()
 endif()
 
 if (OSSIA_PROTOCOL_OSC OR 1) # FIXME is OSC really mandatory ?
-  message(STATUS "Update OSSIA OSC Protocol dependency : oscpack")
-  execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/oscpack
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(OSSIA_SUBMODULE_AUTOUPDATE)
+    message(STATUS "Update OSSIA OSC Protocol dependency : oscpack")
+    execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/oscpack
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
   add_subdirectory(3rdparty/oscpack EXCLUDE_FROM_ALL)
 endif()
 
 if(OSSIA_DNSSD)
   message(STATUS "Update OSSIA DNSSD dependency : servus")
-  execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/Servus
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(OSSIA_SUBMODULE_AUTOUPDATE)
+    execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/Servus
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
   add_subdirectory(3rdparty/Servus EXCLUDE_FROM_ALL)
 endif()
 
