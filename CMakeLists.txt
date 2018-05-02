@@ -28,7 +28,7 @@ else()
 
       if(WIN32)
         message(STATUS "Downloading boost to ${OSSIA_3RDPARTY_FOLDER}/boost.zip")
-        
+
         file(DOWNLOAD
           https://dl.bintray.com/boostorg/release/1.66.0/source/${BOOST_VERSION}.zip
           ${OSSIA_3RDPARTY_FOLDER}/${BOOST_VERSION}.zip)
@@ -39,11 +39,11 @@ else()
 
       else()
         message(STATUS "Downloading boost to ${OSSIA_3RDPARTY_FOLDER}/boost.tar.gz")
-        
+
         file(DOWNLOAD
           https://dl.bintray.com/boostorg/release/1.66.0/source/${BOOST_VERSION}.tar.gz
           ${OSSIA_3RDPARTY_FOLDER}/${BOOST_VERSION}.tar.gz)
-        
+
         execute_process(
           COMMAND ${CMAKE_COMMAND} -E tar xzf ${BOOST_VERSION}.tar.gz
           WORKING_DIRECTORY ${OSSIA_3RDPARTY_FOLDER})
@@ -82,8 +82,14 @@ if(OSSIA_DNSSD)
   add_subdirectory(3rdparty/Servus EXCLUDE_FROM_ALL)
 endif()
 
+if(OSSIA_SUBMODULE_AUTOUPDATE)
+  message(STATUS "Update OSSIA Audio dependency : PortAudio")
+  execute_process(COMMAND git submodule update --init -- ${OSSIA_3RDPARTY_FOLDER}/portaudio
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+add_subdirectory("${OSSIA_3RDPARTY_FOLDER}/portaudio")
+
 # Main library
-find_package(PortAudio)
 add_definitions(-DFMT_HEADER_ONLY=1)
 add_subdirectory(OSSIA)
 

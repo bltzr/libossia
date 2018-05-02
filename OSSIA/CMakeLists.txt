@@ -293,7 +293,7 @@ if(OSSIA_DATAFLOW)
     target_link_libraries(ossia PUBLIC ${CMAKE_DL_LIBS})
   endif()
 
-  target_link_libraries(ossia PUBLIC PortAudio)
+  target_link_libraries(ossia PUBLIC "$<TARGET_LINKER_FILE:portaudio>")
 
   set(SDL_BUILDING_LIBRARY TRUE)
   find_package(SDL)
@@ -471,4 +471,3 @@ set_property(TARGET ossia PROPERTY COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURREN
 if(NOT OSSIA_SANITIZE AND NOT OSSIA_DISABLE_COTIRE AND NOT DISABLE_COTIRE )
 cotire(ossia)
 endif()
-
