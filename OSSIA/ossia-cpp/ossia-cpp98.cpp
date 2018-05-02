@@ -1582,6 +1582,7 @@ oscquery_mirror::oscquery_mirror(std::string name, std::string host) try
 {
   m_dev = new ossia::net::generic_device(
       std::make_unique<ossia::oscquery::oscquery_mirror_protocol>(host), name);
+  refresh();
 }
 catch (...)
 {
@@ -1613,5 +1614,6 @@ void oscquery_mirror::reconnect(std::string name, std::string host)
     delete m_dev;
   m_dev = new ossia::net::generic_device(
       std::make_unique<ossia::oscquery::oscquery_mirror_protocol>(host), name);
+  refresh();
 }
 }
