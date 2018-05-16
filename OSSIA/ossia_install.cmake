@@ -166,7 +166,7 @@ install(DIRECTORY ${OSSIA_3RDPARTY_FOLDER}/brigand/include/brigand
         DESTINATION include
         COMPONENT Devel)
 
-install(DIRECTORY ${OSSIA_3RDPARTY_FOLDER}/fmt/include
+install(DIRECTORY ${OSSIA_3RDPARTY_FOLDER}/fmt/fmt
         DESTINATION include/fmt
         COMPONENT Devel)
 
