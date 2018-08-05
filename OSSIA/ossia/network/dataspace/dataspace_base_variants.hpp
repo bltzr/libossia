@@ -459,7 +459,7 @@ public:
         new (&m_impl.m_value4) ossia::argb_u{other.m_impl.m_value4};
         break;
       case Type::Type5:
-        new (&m_impl.m_value45) ossia::argb8_u{other.m_impl.m_value5};
+        new (&m_impl.m_value5) ossia::argb8_u{other.m_impl.m_value5};
         break;
       case Type::Type6:
         new (&m_impl.m_value6) ossia::hsv_u{other.m_impl.m_value6};
@@ -531,7 +531,7 @@ public:
         new (&m_impl.m_value4) ossia::argb_u{other.m_impl.m_value4};
         break;
       case Type::Type5:
-        new (&m_impl.m_value5) ossia::argb5_u{other.m_impl.m_value5};
+        new (&m_impl.m_value5) ossia::argb8_u{other.m_impl.m_value5};
         break;
       case Type::Type6:
         new (&m_impl.m_value6) ossia::hsv_u{other.m_impl.m_value6};
@@ -1008,7 +1008,7 @@ inline bool operator!=(const color_u& lhs, const color_u& rhs)
 {
   return (lhs.m_type != rhs.m_type);
 }
-inline bool operator==(const color_u& lhs, const ossia::argb_u& rhs)
+inline bool operator==(const color_u& lhs, const ossia::rgba8_u& rhs)
 {
   return (lhs.m_type == color_u::Type::Type0);
 }
@@ -1024,7 +1024,7 @@ inline bool operator!=(const ossia::rgba8_u& lhs, const color_u& rhs)
 {
   return (rhs.m_type != color_u::Type::Type0);
 }
-inline bool operator==(const color_u& lhs, const ossia::rgba8_u& rhs)
+inline bool operator==(const color_u& lhs, const ossia::rgba_u& rhs)
 {
   return (lhs.m_type == color_u::Type::Type1);
 }

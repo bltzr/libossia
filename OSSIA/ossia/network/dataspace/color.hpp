@@ -31,17 +31,16 @@ struct OSSIA_EXPORT rgba8_u : public color_unit<rgba8_u>
 
   using value_type = vec4f;
 
-  static strong_value<neutral_unit>
+  static constexpr strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return {self.dataspace_value[3], self.dataspace_value[0],
-            self.dataspace_value[1], self.dataspace_value[2]};
+    return self;
   }
 
-  static value_type from_neutral(strong_value<neutral_unit> self)
+  static constexpr value_type
+  from_neutral(strong_value<neutral_unit> self)
   {
-    return {self.dataspace_value[1], self.dataspace_value[2],
-            self.dataspace_value[3], self.dataspace_value[0]};
+    return self.dataspace_value;
   }
 };
 
@@ -64,14 +63,16 @@ struct OSSIA_EXPORT rgba_u : public color_unit<rgba_u>
   static strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return {self.dataspace_value[3], self.dataspace_value[0],
-            self.dataspace_value[1], self.dataspace_value[2]};
+    return make_vec(
+            self.dataspace_value[0] * 255., self.dataspace_value[1] * 255.,
+            self.dataspace_value[2] * 255., self.dataspace_value[3] * 255.);
   }
 
   static value_type from_neutral(strong_value<neutral_unit> self)
   {
-    return {self.dataspace_value[1], self.dataspace_value[2],
-            self.dataspace_value[3], self.dataspace_value[0]};
+    return make_vec(
+             self.dataspace_value[0] / 255., self.dataspace_value[1] / 255.,
+             self.dataspace_value[2] / 255., self.dataspace_value[3] / 255.);
   }
 };
 
@@ -92,14 +93,16 @@ struct OSSIA_EXPORT rgb_u : public color_unit<rgb_u>
   static strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return {1., self.dataspace_value[0], self.dataspace_value[1],
-            self.dataspace_value[2]};
+    return make_vec(
+             self.dataspace_value[0] * 255, self.dataspace_value[1] * 255,
+             self.dataspace_value[2] * 255, 255);
   }
 
   static value_type from_neutral(strong_value<neutral_unit> self)
   {
-    return {self.dataspace_value[1], self.dataspace_value[2],
-            self.dataspace_value[3]};
+    return make_vec(
+             self.dataspace_value[0] / 255., self.dataspace_value[1] / 255.,
+             self.dataspace_value[2] / 255.);
   }
 };
 
@@ -120,14 +123,16 @@ struct OSSIA_EXPORT bgr_u : public color_unit<bgr_u>
   static strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return {1., self.dataspace_value[2], self.dataspace_value[1],
-            self.dataspace_value[0]};
+    return make_vec(
+             self.dataspace_value[2] * 255, self.dataspace_value[1] * 255,
+             self.dataspace_value[0] * 255, 255);
   }
 
   static value_type from_neutral(strong_value<neutral_unit> self)
   {
-    return {self.dataspace_value[3], self.dataspace_value[2],
-            self.dataspace_value[1]};
+    return make_vec(
+             self.dataspace_value[2] / 255., self.dataspace_value[1] / 255.,
+             self.dataspace_value[0] / 255.);
   }
 };
 
@@ -145,16 +150,19 @@ struct OSSIA_EXPORT argb_u : public color_unit<argb_u>
 
   using value_type = vec4f;
 
-  static constexpr strong_value<neutral_unit>
+  static strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return self;
+    return make_vec(
+        self.dataspace_value[3] * 255., self.dataspace_value[0] * 255.,
+        self.dataspace_value[1] * 255., self.dataspace_value[2] * 255.);
   }
 
-  static constexpr value_type
-  from_neutral(strong_value<neutral_unit> self)
+  static value_type from_neutral(strong_value<neutral_unit> self)
   {
-    return self.dataspace_value;
+    return make_vec(
+        self.dataspace_value[3] / 255., self.dataspace_value[0] / 255.,
+        self.dataspace_value[1] / 255., self.dataspace_value[2] / 255.);
   }
 };
 
@@ -175,16 +183,14 @@ struct OSSIA_EXPORT argb8_u : public color_unit<argb8_u>
   static strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
   {
-    return make_vec(
-        self.dataspace_value[0] / 255., self.dataspace_value[1] / 255.,
-        self.dataspace_value[2] / 255., self.dataspace_value[3] / 255.);
+    return {self.dataspace_value[1], self.dataspace_value[2],
+            self.dataspace_value[3], self.dataspace_value[0]};
   }
 
   static value_type from_neutral(strong_value<neutral_unit> self)
   {
-    return make_vec(
-        self.dataspace_value[0] * 255., self.dataspace_value[1] * 255.,
-        self.dataspace_value[2] * 255., self.dataspace_value[3] * 255.);
+    return {self.dataspace_value[3], self.dataspace_value[0],
+            self.dataspace_value[1], self.dataspace_value[2]};
   }
 };
 
@@ -240,17 +246,18 @@ struct OSSIA_EXPORT cmy8_u : public color_unit<cmy8_u>
   to_neutral(strong_value<concrete_type> self)
   {
     return make_vec(
-        1., (255. - self.dataspace_value[0]) / 255.,
-        (255. - self.dataspace_value[1]) / 255.,
-        (255. - self.dataspace_value[2]) / 255.);
+        (255. - self.dataspace_value[0]),
+        (255. - self.dataspace_value[1]),
+        (255. - self.dataspace_value[2]),
+         255);
   }
 
   static value_type from_neutral(strong_value<neutral_unit> self)
   {
     return make_vec(
-        255. * (1. - self.dataspace_value[1]),
-        255. * (1. - self.dataspace_value[2]),
-        255. * (1. - self.dataspace_value[3]));
+        (255. - self.dataspace_value[0]),
+        (255. - self.dataspace_value[1]),
+        (255. - self.dataspace_value[2]));
   }
 };
 
