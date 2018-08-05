@@ -17,7 +17,7 @@ class gradient final : public ossia::graph_node
     gradient()
     {
       ossia::outlet_ptr vp = ossia::make_outlet<ossia::value_port>();
-      vp->data.target<ossia::value_port>()->type = ossia::argb_u{};
+      vp->data.target<ossia::value_port>()->type = ossia::rgba8_u{};
       m_outlets.push_back(std::move(vp));
     }
 

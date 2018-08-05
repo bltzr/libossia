@@ -1,3 +1,16 @@
+#pragma once
+#include <ossia/network/dataspace/dataspace.hpp>
+#include <ossia/network/value/value.hpp>
+#include <ossia/network/dataspace/angle.hpp>
+#include <ossia/network/dataspace/color.hpp>
+#include <ossia/network/dataspace/dataspace_fwd.hpp>
+#include <ossia/network/dataspace/distance.hpp>
+#include <ossia/network/dataspace/gain.hpp>
+#include <ossia/network/dataspace/orientation.hpp>
+#include <ossia/network/dataspace/position.hpp>
+#include <ossia/network/dataspace/speed.hpp>
+#include <ossia/network/dataspace/time.hpp>
+
 struct angle
 {
 public:

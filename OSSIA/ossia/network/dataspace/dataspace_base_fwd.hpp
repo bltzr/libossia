@@ -17,7 +17,7 @@ struct dataspace_traits<angle_u>
 template <>
 struct dataspace_traits<color_u>
 {
-  using neutral_unit = argb_u;
+  using neutral_unit = rgba8_u;
   static constexpr auto text()
   {
     constexpr_return(ossia::make_string_array("color"));
