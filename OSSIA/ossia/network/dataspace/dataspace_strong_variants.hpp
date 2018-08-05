@@ -1,16 +1,3 @@
-#pragma once
-#include <ossia/network/dataspace/dataspace.hpp>
-#include <ossia/network/value/value.hpp>
-#include <ossia/network/dataspace/angle.hpp>
-#include <ossia/network/dataspace/color.hpp>
-#include <ossia/network/dataspace/dataspace_fwd.hpp>
-#include <ossia/network/dataspace/distance.hpp>
-#include <ossia/network/dataspace/gain.hpp>
-#include <ossia/network/dataspace/orientation.hpp>
-#include <ossia/network/dataspace/position.hpp>
-#include <ossia/network/dataspace/speed.hpp>
-#include <ossia/network/dataspace/time.hpp>
-
 struct angle
 {
 public:
@@ -353,7 +340,7 @@ public:
   {
   };
   union Impl {
-    ossia::argb m_value0;
+    ossia::rgba8 m_value0;
 
     ossia::rgba m_value1;
 
@@ -361,13 +348,15 @@ public:
 
     ossia::bgr m_value3;
 
-    ossia::argb8 m_value4;
+    ossia::argb m_value4;
 
-    ossia::hsv m_value5;
+    ossia::argb8 m_value5;
 
-    ossia::cmy8 m_value6;
+    ossia::hsv m_value6;
 
-    ossia::xyz m_value7;
+    ossia::cmy8 m_value7;
+
+    ossia::xyz m_value8;
 
     dummy_t m_dummy;
     Impl() : m_dummy{}
@@ -388,6 +377,7 @@ public:
     Type5,
     Type6,
     Type7,
+    Type8,
     Npos
   };
 
@@ -431,9 +421,9 @@ public:
   {
     destruct_impl();
   }
-  color(ossia::argb v) : m_type{Type0}
+  color(ossia::rgba8 v) : m_type{Type0}
   {
-    new (&m_impl.m_value0) ossia::argb{v};
+    new (&m_impl.m_value0) ossia::rgba8{v};
   }
   color(ossia::rgba v) : m_type{Type1}
   {
@@ -447,28 +437,32 @@ public:
   {
     new (&m_impl.m_value3) ossia::bgr{v};
   }
-  color(ossia::argb8 v) : m_type{Type4}
+  color(ossia::argb v) : m_type{Type4}
   {
-    new (&m_impl.m_value4) ossia::argb8{v};
+    new (&m_impl.m_value4) ossia::argb{v};
   }
-  color(ossia::hsv v) : m_type{Type5}
+  color(ossia::argb8 v) : m_type{Type5}
   {
-    new (&m_impl.m_value5) ossia::hsv{v};
+    new (&m_impl.m_value5) ossia::argb8{v};
   }
-  color(ossia::cmy8 v) : m_type{Type6}
+  color(ossia::hsv v) : m_type{Type6}
   {
-    new (&m_impl.m_value6) ossia::cmy8{v};
+    new (&m_impl.m_value6) ossia::hsv{v};
   }
-  color(ossia::xyz v) : m_type{Type7}
+  color(ossia::cmy8 v) : m_type{Type7}
   {
-    new (&m_impl.m_value7) ossia::xyz{v};
+    new (&m_impl.m_value7) ossia::cmy8{v};
+  }
+  color(ossia::xyz v) : m_type{Type8}
+  {
+    new (&m_impl.m_value8) ossia::xyz{v};
   }
   color(const color& other) : m_type{other.m_type}
   {
     switch (m_type)
     {
       case Type::Type0:
-        new (&m_impl.m_value0) ossia::argb{other.m_impl.m_value0};
+        new (&m_impl.m_value0) ossia::rgba8{other.m_impl.m_value0};
         break;
       case Type::Type1:
         new (&m_impl.m_value1) ossia::rgba{other.m_impl.m_value1};
@@ -480,16 +474,19 @@ public:
         new (&m_impl.m_value3) ossia::bgr{other.m_impl.m_value3};
         break;
       case Type::Type4:
-        new (&m_impl.m_value4) ossia::argb8{other.m_impl.m_value4};
+        new (&m_impl.m_value4) ossia::argb{other.m_impl.m_value4};
         break;
       case Type::Type5:
-        new (&m_impl.m_value5) ossia::hsv{other.m_impl.m_value5};
+        new (&m_impl.m_value5) ossia::argb8{other.m_impl.m_value5};
         break;
       case Type::Type6:
-        new (&m_impl.m_value6) ossia::cmy8{other.m_impl.m_value6};
+        new (&m_impl.m_value6) ossia::hsv{other.m_impl.m_value6};
         break;
       case Type::Type7:
-        new (&m_impl.m_value7) ossia::xyz{other.m_impl.m_value7};
+        new (&m_impl.m_value7) ossia::cmy8{other.m_impl.m_value7};
+        break;
+      case Type::Type8:
+        new (&m_impl.m_value8) ossia::xyz{other.m_impl.m_value8};
         break;
       default:
         break;
@@ -500,7 +497,7 @@ public:
     switch (m_type)
     {
       case Type::Type0:
-        new (&m_impl.m_value0) ossia::argb{std::move(other.m_impl.m_value0)};
+        new (&m_impl.m_value0) ossia::rgba8{std::move(other.m_impl.m_value0)};
         break;
       case Type::Type1:
         new (&m_impl.m_value1) ossia::rgba{std::move(other.m_impl.m_value1)};
@@ -512,16 +509,19 @@ public:
         new (&m_impl.m_value3) ossia::bgr{std::move(other.m_impl.m_value3)};
         break;
       case Type::Type4:
-        new (&m_impl.m_value4) ossia::argb8{std::move(other.m_impl.m_value4)};
+        new (&m_impl.m_value4) ossia::argb{std::move(other.m_impl.m_value4)};
         break;
       case Type::Type5:
-        new (&m_impl.m_value5) ossia::hsv{std::move(other.m_impl.m_value5)};
+        new (&m_impl.m_value5) ossia::argb8{std::move(other.m_impl.m_value5)};
         break;
       case Type::Type6:
-        new (&m_impl.m_value6) ossia::cmy8{std::move(other.m_impl.m_value6)};
+        new (&m_impl.m_value6) ossia::hsv{std::move(other.m_impl.m_value6)};
         break;
       case Type::Type7:
-        new (&m_impl.m_value7) ossia::xyz{std::move(other.m_impl.m_value7)};
+        new (&m_impl.m_value7) ossia::cmy8{std::move(other.m_impl.m_value7)};
+        break;
+      case Type::Type8:
+        new (&m_impl.m_value8) ossia::xyz{std::move(other.m_impl.m_value8)};
         break;
       default:
         break;
@@ -534,7 +534,7 @@ public:
     switch (m_type)
     {
       case Type::Type0:
-        new (&m_impl.m_value0) ossia::argb{other.m_impl.m_value0};
+        new (&m_impl.m_value0) ossia::rgba8{other.m_impl.m_value0};
         break;
       case Type::Type1:
         new (&m_impl.m_value1) ossia::rgba{other.m_impl.m_value1};
@@ -546,16 +546,19 @@ public:
         new (&m_impl.m_value3) ossia::bgr{other.m_impl.m_value3};
         break;
       case Type::Type4:
-        new (&m_impl.m_value4) ossia::argb8{other.m_impl.m_value4};
+        new (&m_impl.m_value4) ossia::argb{other.m_impl.m_value4};
         break;
       case Type::Type5:
-        new (&m_impl.m_value5) ossia::hsv{other.m_impl.m_value5};
+        new (&m_impl.m_value5) ossia::argb8{other.m_impl.m_value5};
         break;
       case Type::Type6:
-        new (&m_impl.m_value6) ossia::cmy8{other.m_impl.m_value6};
+        new (&m_impl.m_value6) ossia::hsv{other.m_impl.m_value6};
         break;
       case Type::Type7:
-        new (&m_impl.m_value7) ossia::xyz{other.m_impl.m_value7};
+        new (&m_impl.m_value7) ossia::cmy8{other.m_impl.m_value7};
+        break;
+      case Type::Type8:
+        new (&m_impl.m_value8) ossia::xyz{other.m_impl.m_value8};
         break;
       default:
         break;
@@ -569,7 +572,7 @@ public:
     switch (m_type)
     {
       case Type::Type0:
-        new (&m_impl.m_value0) ossia::argb{std::move(other.m_impl.m_value0)};
+        new (&m_impl.m_value0) ossia::rgba8{std::move(other.m_impl.m_value0)};
         break;
       case Type::Type1:
         new (&m_impl.m_value1) ossia::rgba{std::move(other.m_impl.m_value1)};
@@ -581,16 +584,19 @@ public:
         new (&m_impl.m_value3) ossia::bgr{std::move(other.m_impl.m_value3)};
         break;
       case Type::Type4:
-        new (&m_impl.m_value4) ossia::argb8{std::move(other.m_impl.m_value4)};
-        break;
+         new (&m_impl.m_value4) ossia::argb{std::move(other.m_impl.m_value4)};
+         break;
       case Type::Type5:
-        new (&m_impl.m_value5) ossia::hsv{std::move(other.m_impl.m_value5)};
+        new (&m_impl.m_value5) ossia::argb8{std::move(other.m_impl.m_value5)};
         break;
       case Type::Type6:
-        new (&m_impl.m_value6) ossia::cmy8{std::move(other.m_impl.m_value6)};
+        new (&m_impl.m_value6) ossia::hsv{std::move(other.m_impl.m_value6)};
         break;
       case Type::Type7:
-        new (&m_impl.m_value7) ossia::xyz{std::move(other.m_impl.m_value7)};
+        new (&m_impl.m_value7) ossia::cmy8{std::move(other.m_impl.m_value7)};
+        break;
+      case Type::Type8:
+        new (&m_impl.m_value8) ossia::xyz{std::move(other.m_impl.m_value8)};
         break;
       default:
         break;
@@ -599,7 +605,7 @@ public:
   }
 };
 template <>
-inline const ossia::argb* color::target() const
+inline const ossia::rgba8* color::target() const
 {
   if (m_type == Type0)
     return &m_impl.m_value0;
@@ -627,35 +633,42 @@ inline const ossia::bgr* color::target() const
   return nullptr;
 }
 template <>
-inline const ossia::argb8* color::target() const
+inline const ossia::argb* color::target() const
 {
   if (m_type == Type4)
     return &m_impl.m_value4;
   return nullptr;
 }
 template <>
-inline const ossia::hsv* color::target() const
+inline const ossia::argb8* color::target() const
 {
   if (m_type == Type5)
     return &m_impl.m_value5;
   return nullptr;
 }
 template <>
-inline const ossia::cmy8* color::target() const
+inline const ossia::hsv* color::target() const
 {
   if (m_type == Type6)
     return &m_impl.m_value6;
   return nullptr;
 }
 template <>
-inline const ossia::xyz* color::target() const
+inline const ossia::cmy8* color::target() const
 {
   if (m_type == Type7)
     return &m_impl.m_value7;
   return nullptr;
 }
 template <>
-inline ossia::argb* color::target()
+inline const ossia::xyz* color::target() const
+{
+  if (m_type == Type8)
+    return &m_impl.m_value8;
+  return nullptr;
+}
+template <>
+inline ossia::rgba8* color::target()
 {
   if (m_type == Type0)
     return &m_impl.m_value0;
@@ -683,35 +696,42 @@ inline ossia::bgr* color::target()
   return nullptr;
 }
 template <>
-inline ossia::argb8* color::target()
+inline ossia::argb* color::target()
 {
   if (m_type == Type4)
     return &m_impl.m_value4;
   return nullptr;
 }
 template <>
-inline ossia::hsv* color::target()
+inline ossia::argb8* color::target()
 {
   if (m_type == Type5)
     return &m_impl.m_value5;
   return nullptr;
 }
 template <>
-inline ossia::cmy8* color::target()
+inline ossia::hsv* color::target()
 {
   if (m_type == Type6)
     return &m_impl.m_value6;
   return nullptr;
 }
 template <>
-inline ossia::xyz* color::target()
+inline ossia::cmy8* color::target()
 {
   if (m_type == Type7)
     return &m_impl.m_value7;
   return nullptr;
 }
 template <>
-inline const ossia::argb& color::get() const
+inline ossia::xyz* color::target()
+{
+  if (m_type == Type8)
+    return &m_impl.m_value8;
+  return nullptr;
+}
+template <>
+inline const ossia::rgba8& color::get() const
 {
   if (m_type == Type0)
     return m_impl.m_value0;
@@ -739,35 +759,42 @@ inline const ossia::bgr& color::get() const
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline const ossia::argb8& color::get() const
+inline const ossia::argb& color::get() const
 {
   if (m_type == Type4)
     return m_impl.m_value4;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline const ossia::hsv& color::get() const
+inline const ossia::argb8& color::get() const
 {
   if (m_type == Type5)
     return m_impl.m_value5;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline const ossia::cmy8& color::get() const
+inline const ossia::hsv& color::get() const
 {
   if (m_type == Type6)
     return m_impl.m_value6;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline const ossia::xyz& color::get() const
+inline const ossia::cmy8& color::get() const
 {
   if (m_type == Type7)
     return m_impl.m_value7;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline ossia::argb& color::get()
+inline const ossia::xyz& color::get() const
+{
+  if (m_type == Type8)
+    return m_impl.m_value8;
+  throw std::runtime_error("dataspace_strong_variant: bad type");
+}
+template <>
+inline ossia::rgba8& color::get()
 {
   if (m_type == Type0)
     return m_impl.m_value0;
@@ -794,32 +821,38 @@ inline ossia::bgr& color::get()
     return m_impl.m_value3;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
-template <>
-inline ossia::argb8& color::get()
+inline ossia::argb& color::get()
 {
   if (m_type == Type4)
     return m_impl.m_value4;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline ossia::hsv& color::get()
+inline ossia::argb8& color::get()
 {
   if (m_type == Type5)
     return m_impl.m_value5;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline ossia::cmy8& color::get()
+inline ossia::hsv& color::get()
 {
   if (m_type == Type6)
     return m_impl.m_value6;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <>
-inline ossia::xyz& color::get()
+inline ossia::cmy8& color::get()
 {
   if (m_type == Type7)
     return m_impl.m_value7;
+  throw std::runtime_error("dataspace_strong_variant: bad type");
+}
+template <>
+inline ossia::xyz& color::get()
+{
+  if (m_type == Type8)
+    return m_impl.m_value8;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
 template <typename Visitor>
@@ -843,6 +876,8 @@ auto apply_nonnull(Visitor&& functor, const color& var)
       return functor(var.m_impl.m_value6);
     case color::Type::Type7:
       return functor(var.m_impl.m_value7);
+    case color::Type::Type8:
+      return functor(var.m_impl.m_value8);
     default:
       throw std::runtime_error("dataspace_strong_variant: bad type");
   }
@@ -868,6 +903,8 @@ auto apply_nonnull(Visitor&& functor, color& var)
       return functor(var.m_impl.m_value6);
     case color::Type::Type7:
       return functor(var.m_impl.m_value7);
+    case color::Type::Type8:
+      return functor(var.m_impl.m_value8);
     default:
       throw std::runtime_error("dataspace_strong_variant: bad type");
   }
@@ -893,6 +930,8 @@ auto apply_nonnull(Visitor&& functor, color&& var)
       return functor(std::move(var.m_impl.m_value6));
     case color::Type::Type7:
       return functor(std::move(var.m_impl.m_value7));
+    case color::Type::Type8:
+      return functor(std::move(var.m_impl.m_value8));
     default:
       throw std::runtime_error("dataspace_strong_variant: bad type");
   }
@@ -918,6 +957,8 @@ auto apply(Visitor&& functor, const color& var)
       return functor(var.m_impl.m_value6);
     case color::Type::Type7:
       return functor(var.m_impl.m_value7);
+    case color::Type::Type8:
+      return functor(var.m_impl.m_value8);
     default:
       return functor();
   }
@@ -943,6 +984,8 @@ auto apply(Visitor&& functor, color& var)
       return functor(var.m_impl.m_value6);
     case color::Type::Type7:
       return functor(var.m_impl.m_value7);
+    case color::Type::Type8:
+      return functor(var.m_impl.m_value8);
     default:
       return functor();
   }
@@ -968,6 +1011,8 @@ auto apply(Visitor&& functor, color&& var)
       return functor(std::move(var.m_impl.m_value6));
     case color::Type::Type7:
       return functor(std::move(var.m_impl.m_value7));
+    case color::Type::Type8:
+      return functor(std::move(var.m_impl.m_value8));
     default:
       return functor();
   }
@@ -994,6 +1039,8 @@ inline bool operator==(const color& lhs, const color& rhs)
         return lhs.m_impl.m_value6 == rhs.m_impl.m_value6;
       case color::Type::Type7:
         return lhs.m_impl.m_value7 == rhs.m_impl.m_value7;
+      case color::Type::Type8:
+        return lhs.m_impl.m_value8 == rhs.m_impl.m_value8;
       default:
         return true;
     }
@@ -1022,24 +1069,26 @@ inline bool operator!=(const color& lhs, const color& rhs)
       return lhs.m_impl.m_value6 != rhs.m_impl.m_value6;
     case color::Type::Type7:
       return lhs.m_impl.m_value7 != rhs.m_impl.m_value7;
+    case color::Type::Type8:
+      return lhs.m_impl.m_value8 != rhs.m_impl.m_value8;
     default:
       return false;
   }
   return true;
 }
-inline bool operator==(const color& lhs, const ossia::argb& rhs)
+inline bool operator==(const color& lhs, const ossia::rgba8& rhs)
 {
   return (lhs.m_type == color::Type::Type0) && (lhs.m_impl.m_value0 == rhs);
 }
-inline bool operator==(const ossia::argb& lhs, const color& rhs)
+inline bool operator==(const ossia::rgba8& lhs, const color& rhs)
 {
   return (rhs.m_type == color::Type::Type0) && (rhs.m_impl.m_value0 == lhs);
 }
-inline bool operator!=(const color& lhs, const ossia::argb& rhs)
+inline bool operator!=(const color& lhs, const ossia::rgba8& rhs)
 {
   return (lhs.m_type != color::Type::Type0) || (lhs.m_impl.m_value0 != rhs);
 }
-inline bool operator!=(const ossia::argb& lhs, const color& rhs)
+inline bool operator!=(const ossia::rgba8& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type0) || (rhs.m_impl.m_value0 != lhs);
 }
@@ -1091,69 +1140,85 @@ inline bool operator!=(const ossia::bgr& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type3) || (rhs.m_impl.m_value3 != lhs);
 }
-inline bool operator==(const color& lhs, const ossia::argb8& rhs)
+inline bool operator==(const color& lhs, const ossia::argb& rhs)
 {
   return (lhs.m_type == color::Type::Type4) && (lhs.m_impl.m_value4 == rhs);
 }
-inline bool operator==(const ossia::argb8& lhs, const color& rhs)
+inline bool operator==(const ossia::argb& lhs, const color& rhs)
 {
   return (rhs.m_type == color::Type::Type4) && (rhs.m_impl.m_value4 == lhs);
 }
-inline bool operator!=(const color& lhs, const ossia::argb8& rhs)
+inline bool operator!=(const color& lhs, const ossia::argb& rhs)
 {
   return (lhs.m_type != color::Type::Type4) || (lhs.m_impl.m_value4 != rhs);
 }
-inline bool operator!=(const ossia::argb8& lhs, const color& rhs)
+inline bool operator!=(const ossia::argb& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type4) || (rhs.m_impl.m_value4 != lhs);
 }
-inline bool operator==(const color& lhs, const ossia::hsv& rhs)
+inline bool operator==(const color& lhs, const ossia::argb8& rhs)
 {
   return (lhs.m_type == color::Type::Type5) && (lhs.m_impl.m_value5 == rhs);
 }
-inline bool operator==(const ossia::hsv& lhs, const color& rhs)
+inline bool operator==(const ossia::argb8& lhs, const color& rhs)
 {
   return (rhs.m_type == color::Type::Type5) && (rhs.m_impl.m_value5 == lhs);
 }
-inline bool operator!=(const color& lhs, const ossia::hsv& rhs)
+inline bool operator!=(const color& lhs, const ossia::argb8& rhs)
 {
   return (lhs.m_type != color::Type::Type5) || (lhs.m_impl.m_value5 != rhs);
 }
-inline bool operator!=(const ossia::hsv& lhs, const color& rhs)
+inline bool operator!=(const ossia::argb8& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type5) || (rhs.m_impl.m_value5 != lhs);
 }
-inline bool operator==(const color& lhs, const ossia::cmy8& rhs)
+inline bool operator==(const color& lhs, const ossia::hsv& rhs)
 {
   return (lhs.m_type == color::Type::Type6) && (lhs.m_impl.m_value6 == rhs);
 }
-inline bool operator==(const ossia::cmy8& lhs, const color& rhs)
+inline bool operator==(const ossia::hsv& lhs, const color& rhs)
 {
   return (rhs.m_type == color::Type::Type6) && (rhs.m_impl.m_value6 == lhs);
 }
-inline bool operator!=(const color& lhs, const ossia::cmy8& rhs)
+inline bool operator!=(const color& lhs, const ossia::hsv& rhs)
 {
   return (lhs.m_type != color::Type::Type6) || (lhs.m_impl.m_value6 != rhs);
 }
-inline bool operator!=(const ossia::cmy8& lhs, const color& rhs)
+inline bool operator!=(const ossia::hsv& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type6) || (rhs.m_impl.m_value6 != lhs);
 }
-inline bool operator==(const color& lhs, const ossia::xyz& rhs)
+inline bool operator==(const color& lhs, const ossia::cmy8& rhs)
 {
   return (lhs.m_type == color::Type::Type7) && (lhs.m_impl.m_value7 == rhs);
 }
-inline bool operator==(const ossia::xyz& lhs, const color& rhs)
+inline bool operator==(const ossia::cmy8& lhs, const color& rhs)
 {
   return (rhs.m_type == color::Type::Type7) && (rhs.m_impl.m_value7 == lhs);
 }
-inline bool operator!=(const color& lhs, const ossia::xyz& rhs)
+inline bool operator!=(const color& lhs, const ossia::cmy8& rhs)
 {
   return (lhs.m_type != color::Type::Type7) || (lhs.m_impl.m_value7 != rhs);
 }
-inline bool operator!=(const ossia::xyz& lhs, const color& rhs)
+inline bool operator!=(const ossia::cmy8& lhs, const color& rhs)
 {
   return (rhs.m_type != color::Type::Type7) || (rhs.m_impl.m_value7 != lhs);
+}
+inline bool operator==(const color& lhs, const ossia::xyz& rhs)
+{
+  return (lhs.m_type == color::Type::Type8) && (lhs.m_impl.m_value8 == rhs);
+}
+inline bool operator==(const ossia::xyz& lhs, const color& rhs)
+{
+  return (rhs.m_type == color::Type::Type8) && (rhs.m_impl.m_value8 == lhs);
+}
+inline bool operator!=(const color& lhs, const ossia::xyz& rhs)
+{
+  return (lhs.m_type != color::Type::Type8) || (lhs.m_impl.m_value8 != rhs);
+}
+inline bool operator!=(const ossia::xyz& lhs, const color& rhs)
+{
+  return (rhs.m_type != color::Type::Type8) || (rhs.m_impl.m_value8 != lhs);
 }
 struct distance
 {
