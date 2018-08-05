@@ -41,7 +41,7 @@ struct OSSIA_EXPORT unit_t final
   unit_t(color_u t) : v{t}
   {
   }
-  unit_t(argb_u t) : v{color_u{t}}
+  unit_t(rgba8_u t) : v{color_u{t}}
   {
   }
   unit_t(rgba_u t) : v{color_u{t}}
@@ -51,6 +51,9 @@ struct OSSIA_EXPORT unit_t final
   {
   }
   unit_t(bgr_u t) : v{color_u{t}}
+  {
+  }
+  unit_t(argb_u t) : v{color_u{t}}
   {
   }
   unit_t(argb8_u t) : v{color_u{t}}

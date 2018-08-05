@@ -16,7 +16,7 @@ using angle_u_list = brigand::list<degree_u, radian_u>;
 
 using color_u_list =
 brigand::list<
-argb_u, rgba_u, rgb_u, bgr_u, argb8_u, hsv_u, cmy8_u, xyz_u
+rgba8_u, rgba_u, rgb_u, bgr_u, argb_u, argb8_u, hsv_u, cmy8_u, xyz_u
 /*, hsl_u, cmyk8_u, yxy_u, hunter_lab_u, cie_lab_u, cie_luv_u*/>;
 
 using distance_u_list = brigand::

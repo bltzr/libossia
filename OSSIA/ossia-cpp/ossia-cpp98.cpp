@@ -622,6 +622,16 @@ void node::set_filepath()
 
 }
 
+void node::set_rgba8()
+{
+  if (m_node)
+  {
+    m_node->remove_parameter();
+    ossia::setup_parameter(ossia::rgba8_u{}, *m_node);
+  }
+
+}
+
 void node::set_rgb()
 {
   if (m_node)
@@ -959,6 +969,17 @@ node node::create_filepath(std::string addr)
   {
     auto n = &ossia::net::create_node(*m_node, addr);
     return node{n, ossia::setup_parameter(ossia::filesystem_path_type(), *n)};
+  }
+
+  return {};
+}
+
+node node::create_rgba8(std::string addr)
+{
+  if (m_node)
+  {
+    auto n = &ossia::net::create_node(*m_node, addr);
+    return node{n, ossia::setup_parameter(ossia::rgba8_u{}, *n)};
   }
 
   return {};

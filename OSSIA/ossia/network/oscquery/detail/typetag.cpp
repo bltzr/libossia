@@ -69,7 +69,7 @@ struct osc_type_visitor
 
 static std::string get_osc_typetag_impl(const net::parameter_base& addr)
 {
-  if (addr.get_unit() == ossia::rgba_u{})
+  if (addr.get_unit() == ossia::rgba8_u{})
     return "r";
 
   std::string s;

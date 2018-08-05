@@ -595,6 +595,10 @@ class OSSIA_EXPORT node
      * @brief adds a filepath parameter to the current node
      */
     void set_filepath();
+    /**RGBA8: 4 int numbers between 0 and 255 describing respectively Red, Green, Blue and Alpha color values
+     * @brief adds a vec4f parameter to the current node, with the color.rgba8 unit
+     */
+    void set_rgba8();
     /**RGB: 3 float numbers between 0. and 1. describing respectively Red, Green and Blue color values
      * @brief adds a vec3f parameter to the current node, with the color.rgb unit
      */
@@ -754,6 +758,13 @@ class OSSIA_EXPORT node
      * @return the created opp::node object
      */
     node create_filepath(std::string addr);
+    /**RGBA8: 4 int numbers between 0 and 255 describing respectively Red, Green, Blue and Alpha values
+     * @brief creates a child node with tne given name,
+     * and a vec4f parameter with the color.rgba8 unit
+     * @param addr: the name of the created node
+     * @return the created opp::node object
+     */
+    node create_rgba8(std::string addr);
     /**RGB: 3 float numbers between 0. and 1. describing respectively Red, Green and Blue values
      * @brief creates a child node with tne given name,
      * and a vec3f parameter with the color.rgb unit
