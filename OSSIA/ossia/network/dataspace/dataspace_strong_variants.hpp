@@ -821,6 +821,7 @@ inline ossia::bgr& color::get()
     return m_impl.m_value3;
   throw std::runtime_error("dataspace_strong_variant: bad type");
 }
+template <>
 inline ossia::argb& color::get()
 {
   if (m_type == Type4)
