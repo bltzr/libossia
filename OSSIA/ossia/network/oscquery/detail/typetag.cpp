@@ -145,7 +145,7 @@ complex_type get_type_from_osc_typetag(ossia::string_view str)
           return ossia::generic_buffer_type();
 
         case oscpack::TypeTagValues::RGBA_COLOR_TYPE_TAG:
-          return ossia::rgba_u{};
+          return ossia::rgba8_u{};
 
         default:
           break;
