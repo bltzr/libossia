@@ -28,26 +28,26 @@ hsv_u::to_neutral(strong_value<hsv_u::concrete_type> self)
     switch (var_i)
     {
       case 0:
-        return make_vec(1., V, var_3, var_1);
+        return make_vec(V * 255., var_3 * 255., var_1 * 255., 255.);
       case 1:
-        return make_vec(1., var_2, V, var_1);
+        return make_vec(var_2 * 255., V * 255., var_1 * 255., 255.);
       case 2:
-        return make_vec(1., var_1, V, var_3);
+        return make_vec(var_1 * 255., V * 255., var_3 * 255., 255.);
       case 3:
-        return make_vec(1., var_1, var_2, V);
+        return make_vec(var_1 * 255., var_2 * 255., V * 255., 255.);
       case 4:
-        return make_vec(1., var_3, var_1, V);
+        return make_vec(var_3 * 255., var_1 * 255., V * 255., 255.);
       default:
-        return make_vec(1., V, var_1, var_2);
+        return make_vec(V * 255., var_1 * 255., var_2 * 255., 255.);
     }
   }
 }
 
 hsv_u::value_type hsv_u::from_neutral(strong_value<hsv_u::neutral_unit> self)
 {
-  const double var_R = self.dataspace_value[1];
-  const double var_G = self.dataspace_value[2];
-  const double var_B = self.dataspace_value[3];
+  const double var_R = self.dataspace_value[0] / 255.;
+  const double var_G = self.dataspace_value[1] / 255.;
+  const double var_B = self.dataspace_value[2] / 255.;
 
   const auto var_Min
       = std::min(std::min(var_R, var_G), var_B); // Min. value of RGB
@@ -102,7 +102,7 @@ xyz_u::to_neutral(strong_value<xyz_u::concrete_type> self)
                            : var * 12.92;
   };
 
-  return make_vec(1., translate(var_R), translate(var_G), translate(var_B));
+  return make_vec(translate(var_R) * 255., translate(var_G) * 255., translate(var_B) * 255., 255.);
 }
 
 xyz_u::value_type xyz_u::from_neutral(strong_value<xyz_u::neutral_unit> self)
@@ -111,9 +111,9 @@ xyz_u::value_type xyz_u::from_neutral(strong_value<xyz_u::neutral_unit> self)
     return 100. * ((var > 0.04045) ? std::pow((var + 0.055) / 1.055, 2.4)
                                    : var / 12.92);
   };
-  auto var_R = translate(self.dataspace_value[1]);
-  auto var_G = translate(self.dataspace_value[2]);
-  auto var_B = translate(self.dataspace_value[3]);
+  auto var_R = translate(self.dataspace_value[0] / 255.);
+  auto var_G = translate(self.dataspace_value[1] / 255.);
+  auto var_B = translate(self.dataspace_value[2] / 255.);
 
   // Observer. = 2°, Illuminant = D65
 
@@ -134,7 +134,7 @@ hunter_lab_u::to_neutral(strong_value<hunter_lab_u::concrete_type> self)
   const auto y = l * l / 100.;
   const auto z = b / 7.0 * l / 10.0;
 
-  ossia::xyz xyz{(float)((x + y) / 1.02), (float)y, (float)(-(z - y) / 0.847)};
+  ossia::xyz xyz{(float)((x + y) / 1.02), (float)y , (float)(-(z - y) / 0.847)};
   return xyz;
 }
 
@@ -146,9 +146,9 @@ hunter_lab_u::from_neutral(strong_value<hunter_lab_u::neutral_unit> self)
   // should be parametrized on white
   ossia::xyz xy{self};
 
-  const auto x = xy.dataspace_value[0];
-  const auto y = xy.dataspace_value[1];
-  const auto z = xy.dataspace_value[2];
+  const auto x = xy.dataspace_value[0] / 255.;
+  const auto y = xy.dataspace_value[1] / 255.;
+  const auto z = xy.dataspace_value[2] / 255.;
   const auto sqrt_y = std::sqrt(y);
 
   const auto l = 10.0 * sqrt_y;
