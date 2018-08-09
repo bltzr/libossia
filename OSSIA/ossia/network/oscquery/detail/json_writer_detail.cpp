@@ -10,8 +10,11 @@
 #include <ossia/network/exceptions.hpp>
 #include <ossia/network/oscquery/detail/attributes.hpp>
 #include <ossia/network/oscquery/detail/domain_to_json.hpp>
+#include <ossia/network/oscquery/detail/outbound_visitor.hpp>
 #include <ossia/network/oscquery/oscquery_server.hpp>
 #include <ossia/detail/for_each.hpp>
+#include <ossia/network/osc/detail/message_generator.hpp>
+#include <ossia/network/osc/detail/osc_fwd.hpp>
 
 namespace ossia
 {
@@ -451,13 +454,24 @@ json_writer::query_host_info(const oscquery_server_protocol& proto)
   wr.Bool(true);
   wr.Key("CRITICAL");
   wr.Bool(true);
+  wr.Key("DESCRIPTION");
+  wr.Bool(true);
+
   wr.Key("HTML");
   wr.Bool(true);
 
-  wr.Key("STREAMING");
+  wr.Key("OSC_STREAMING");
+  wr.Bool(true);
+
+  wr.Key("LISTEN");
+  wr.Bool(true);
+
+  wr.Key("ECHO");
   wr.Bool(true);
 
   wr.Key("PATH_CHANGED");
+  wr.Bool(false);
+  wr.Key("PATH_RENAMED");
   wr.Bool(false);
   wr.Key("PATH_ADDED");
   wr.Bool(true);
@@ -481,6 +495,68 @@ json_writer::string_t json_writer::query_namespace(const net::node_base& node)
 
   return buf;
 }
+
+json_writer::string_t json_writer::listen(string_view address)
+{
+  string_t buf;
+  writer_t wr(buf);
+
+  wr.StartObject();
+
+  write_json_key(wr, detail::command());
+  write_json(wr, detail::listen());
+
+  write_json_key(wr, detail::data());
+  write_json(wr, address);
+
+  wr.EndObject();
+
+  return buf;
+}
+
+json_writer::string_t json_writer::ignore(string_view address)
+{
+  string_t buf;
+  writer_t wr(buf);
+
+  wr.StartObject();
+
+  write_json_key(wr, detail::command());
+  write_json(wr, detail::ignore());
+
+  write_json_key(wr, detail::data());
+  write_json(wr, address);
+
+  wr.EndObject();
+
+  return buf;
+}
+
+json_writer::string_t json_writer::start_osc_streaming(int local_server_port, int local_sender_port)
+{
+  string_t buf;
+  writer_t wr(buf);
+
+  wr.StartObject();
+
+  write_json_key(wr, detail::command());
+  write_json(wr, detail::start_osc_streaming());
+
+  write_json_key(wr, detail::data());
+  {
+    wr.StartObject();
+    write_json_key(wr, detail::local_server_port());
+    wr.Int(local_server_port);
+    write_json_key(wr, detail::local_sender_port());
+    wr.Int(local_sender_port);
+    wr.EndObject();
+  }
+
+  wr.EndObject();
+
+  return buf;
+}
+
 
 json_writer::string_t json_writer::path_added(const net::node_base& n)
 {
@@ -632,5 +708,52 @@ json_writer::string_t json_writer::attributes_changed_array(
 
   return buf;
 }
+
+
+std::string osc_writer::send_message(const net::parameter_base& p, const value& v)
+{
+  std::string s;
+
+  try
+  {
+    oscpack::MessageGenerator<oscquery::osc_outbound_visitor> m;
+
+    auto str = m(p.get_node().osc_address(), v);
+    s.assign(str.Data(), str.Size());
+  }
+  catch (const oscpack::OutOfBufferMemoryException&)
+  {
+    oscpack::DynamicMessageGenerator<oscquery::osc_outbound_visitor> m;
+
+    auto str = m(p.get_node().osc_address(), v);
+    s.assign(str.Data(), str.Size());
+  }
+
+  return s;
+}
+
+
+std::string osc_writer::send_message(const net::full_parameter_data& p, const value& v)
+{
+  std::string s;
+  try
+  {
+    oscpack::MessageGenerator<oscquery::osc_outbound_visitor> m;
+
+    auto str = m(p.address, v);
+    s.assign(str.Data(), str.Size());
+  }
+  catch (const oscpack::OutOfBufferMemoryException&)
+  {
+    oscpack::DynamicMessageGenerator<oscquery::osc_outbound_visitor> m;
+
+    auto str = m(p.address, v);
+    s.assign(str.Data(), str.Size());
+  }
+
+  return s;
+}
+
+
 }
 }

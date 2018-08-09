@@ -38,7 +38,7 @@ public:
 
     m_client.set_message_handler([handler = std::move(onMessage)](
         connection_handler hdl, client_t::message_ptr msg) {
-      handler(hdl, msg->get_raw_payload());
+      handler(hdl, msg->get_opcode(), msg->get_raw_payload());
     });
 
     m_client.set_close_handler([=](connection_handler hdl) {
@@ -149,6 +149,24 @@ public:
     m_client.send(
         m_hdl, request.GetString(), request.GetSize(),
         websocketpp::frame::opcode::text, ec);
+
+    if (ec)
+    {
+      m_client.get_alog().write(
+          websocketpp::log::alevel::app, "Send Error: " + ec.message());
+    }
+  }
+
+  void send_binary_message(const std::string& request)
+  {
+    if (!m_open)
+      return;
+
+    websocketpp::lib::error_code ec;
+
+    m_client.send(
+        m_hdl, request.data(), request.size(),
+        websocketpp::frame::opcode::binary, ec);
 
     if (ec)
     {

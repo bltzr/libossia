@@ -22,9 +22,29 @@ namespace detail
 {
 
 // Attributes
+constexpr auto name()
+{
+  return "NAME";
+}
+constexpr auto osc_ip()
+{
+  return "OSC_IP";
+}
 constexpr auto osc_port()
 {
   return "OSC_PORT";
+}
+constexpr auto ws_ip()
+{
+  return "WS_IP";
+}
+constexpr auto ws_port()
+{
+  return "WS_PORT";
+}
+constexpr auto transport()
+{
+  return "TRANSPORT";
 }
 constexpr auto attribute_full_path()
 {
@@ -163,17 +183,25 @@ constexpr auto node_name()
 {
   constexpr_return(ossia::make_string_view("NAME"));
 }
-constexpr auto set_port()
+constexpr auto start_osc_streaming()
 {
-  constexpr_return(ossia::make_string_view("SET_PORT"));
+  constexpr_return(ossia::make_string_view("START_OSC_STREAMING"));
 }
-constexpr auto local_port()
+constexpr auto local_server_port()
 {
-  constexpr_return(ossia::make_string_view("LOCAL_PORT"));
+  constexpr_return(ossia::make_string_view("LOCAL_SERVER_PORT"));
+}
+constexpr auto local_sender_port()
+{
+  constexpr_return(ossia::make_string_view("LOCAL_SENDER_PORT"));
 }
 constexpr auto listen()
 {
   constexpr_return(ossia::make_string_view("LISTEN"));
+}
+constexpr auto ignore()
+{
+  constexpr_return(ossia::make_string_view("IGNORE"));
 }
 constexpr auto text_true()
 {
@@ -182,14 +210,6 @@ constexpr auto text_true()
 constexpr auto text_false()
 {
   constexpr_return(ossia::make_string_view("FALSE"));
-}
-constexpr auto query_listen_true()
-{
-  constexpr_return(ossia::make_string_view("?LISTEN=TRUE"));
-}
-constexpr auto query_listen_false()
-{
-  constexpr_return(ossia::make_string_view("?LISTEN=FALSE"));
 }
 constexpr auto query_value()
 {
@@ -454,7 +474,11 @@ enum class message_type
   PathChanged,
   PathAdded,
   PathRemoved,
-  AttributesChanged
+  AttributesChanged,
+  HostInfo,
+  StartOscStreaming,
+  Listen,
+  Ignore
 };
 
 using key_map_type = string_view_map<ossia::string_view>;

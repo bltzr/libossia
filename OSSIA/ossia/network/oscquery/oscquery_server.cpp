@@ -42,15 +42,27 @@ oscquery_server_protocol::oscquery_server_protocol(
   m_websocketServer->set_close_handler(
       [&](connection_handler hdl) { on_connectionClosed(hdl); });
   m_websocketServer->set_message_handler([&](
-      const connection_handler& hdl, const std::string& str) {
-    auto res = on_WSrequest(hdl, str);
+      const connection_handler& hdl, websocketpp::frame::opcode::value op, const std::string& str) {
+    switch (op)
+    {
+      case websocketpp::frame::opcode::value::TEXT:
+      {
+        auto res = on_WSrequest(hdl, str);
 
-    if (!res.data.empty()
-        && res.type != server_reply::data_type::binary
-        && m_logger.outbound_logger)
-      m_logger.outbound_logger->info("OSCQuery WS Out: {}", res.data);
+        if (!res.data.empty()
+            && res.type != server_reply::data_type::binary
+            && m_logger.outbound_logger)
+          m_logger.outbound_logger->info("OSCQuery WS Out: {}", res.data);
 
-    return res;
+        return res;
+      }
+      case websocketpp::frame::opcode::value::BINARY:
+      {
+        return on_BinaryWSrequest(hdl, str);
+      }
+      default:
+        return oscquery::server_reply{};
+    }
   });
 
   m_websocketServer->listen(m_wsPort);
@@ -128,9 +140,9 @@ bool oscquery_server_protocol::push_impl(const T& addr)
         }
         else
         {
-          m_websocketServer->send_message(
+          m_websocketServer->send_binary_message(
                 client.connection,
-                json_writer::send_message(addr, val));
+                osc_writer::send_message(addr, val));
         }
       }
     }
@@ -139,8 +151,8 @@ bool oscquery_server_protocol::push_impl(const T& addr)
       lock_t lock(m_clientsMutex);
       for (auto& client : m_clients)
       {
-        m_websocketServer->send_message(
-            client.connection, json_writer::send_message(addr, val));
+        m_websocketServer->send_binary_message(
+            client.connection, osc_writer::send_message(addr, val));
       }
     }
 
@@ -424,7 +436,8 @@ void oscquery_server_protocol::on_OSCMessage(
   {
     for(auto& c : m_clients)
     {
-      if(ip.port != c.remote_sender_port)
+      // TODO this is weird: udp does not really have a port...
+      if(ip.port != c.remote_sender_port) // TODO check for ip too
       {
         c.sender->socket().Send(m.data(), m.size());
       }
@@ -455,7 +468,7 @@ void oscquery_server_protocol::on_connectionOpen(const connection_handler& hdl) 
     onClientConnected(con->get_remote_endpoint());
   }
   // Send the client a message with the OSC port
-  m_websocketServer->send_message(hdl, json_writer::device_info(m_oscPort));
+  // m_websocketServer->send_message(hdl, json_writer::device_info(m_oscPort));
 }
 catch (const std::exception& e)
 {
@@ -564,7 +577,7 @@ void oscquery_server_protocol::update_zeroconf()
   try
   {
     m_zeroconfServerWS = net::make_zeroconf_server(
-        get_device().get_name()+':'+std::to_string(m_oscPort), "_oscjson._tcp", "", m_wsPort, 0);
+        get_device().get_name(), "_oscjson._tcp", "", m_wsPort, 0);
   }
   catch (const std::exception& e)
   {
@@ -578,7 +591,7 @@ void oscquery_server_protocol::update_zeroconf()
   try
   {
     m_zeroconfServerOSC = net::make_zeroconf_server(
-        get_device().get_name()+':'+std::to_string(m_oscPort), "_osc._udp", "", m_oscPort, 0);
+        get_device().get_name(), "_osc._udp", "", m_oscPort, 0);
   }
   catch (const std::exception& e)
   {
@@ -617,6 +630,29 @@ ossia::oscquery::server_reply oscquery_server_protocol::on_WSrequest(
     }
   }
   // Exceptions are catched in the caller.
+
+  return {};
+}
+
+server_reply oscquery_server_protocol::on_BinaryWSrequest(
+    const oscquery_server_protocol::connection_handler& hdl,
+    const std::string& message)
+{
+  auto handler = [=](const oscpack::ReceivedMessage& m,
+      const oscpack::IpEndpointName& ip) {
+    this->on_OSCMessage(m, ip);
+  };
+  osc::listener<decltype(handler)> h{handler};
+  auto clt = find_client(hdl);
+  if(clt)
+  {
+    // TODO use proper ip / port
+    h.ProcessPacket(message.data(), message.size(), {});
+  }
+  else
+  {
+    h.ProcessPacket(message.data(), message.size(), {});
+  }
 
   return {};
 }

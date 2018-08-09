@@ -611,14 +611,14 @@ void json_parser_impl::readObject(
       }
 
       // We have a type. Now we read the value according to it.
-      if (value_it != obj.MemberEnd())
-      {
+
+      auto parse_oscquery_value =
+          [&] (const rapidjson::Value& v, bool& ok) {
         if(typetag == "m")
           typetag = "iiii";
         else if(typetag == "r")
           typetag = "ffff";
         ossia::value res = node.get_parameter()->value();
-        const rapidjson::Value& v = value_it->value;
         if(typetag.size() == 1)
         {
           if(v.IsArray())
@@ -626,36 +626,38 @@ void json_parser_impl::readObject(
             const auto& ar = v.GetArray();
             if(!ar.Empty())
             {
-              bool ok = res.apply(oscquery::detail::json_to_single_value{*ar.Begin()});
-              if (ok)
-                node.get_parameter()->set_value(std::move(res));
+              ok = res.apply(oscquery::detail::json_to_single_value{*ar.Begin()});
             }
           }
           else
           {
-            bool ok = res.apply(oscquery::detail::json_to_single_value{v});
-            if (ok)
-              node.get_parameter()->set_value(std::move(res));
+            ok = res.apply(oscquery::detail::json_to_single_value{v});
           }
         }
         else
         {
           int typetag_counter = 0;
-          bool ok = res.apply(oscquery::detail::json_to_value{
+          ok = res.apply(oscquery::detail::json_to_value{
               v, typetag, typetag_counter});
-          if (ok)
-            node.get_parameter()->set_value(std::move(res));
         }
+        return res;
+      };
+
+      // We have a type. Now we read the value according to it.
+      if (value_it != obj.MemberEnd())
+      {
+        bool ok = false;
+        auto res = parse_oscquery_value(value_it->value, ok);
+        if(ok)
+          node.get_parameter()->set_value(std::move(res));
       }
 
       // Same for default value
       if (default_value_it != obj.MemberEnd())
       {
-        ossia::value res = node.get_parameter()->value();
-        int typetag_counter = 0;
-        bool ok = res.apply(oscquery::detail::json_to_value{
-            default_value_it->value, typetag, typetag_counter});
-        if (ok)
+        bool ok = false;
+        auto res = parse_oscquery_value(default_value_it->value, ok);
+        if(ok)
           ossia::net::set_default_value(node, std::move(res));
       }
     }
@@ -736,7 +738,11 @@ json_parser::message_type(const rapidjson::Value& obj)
       {detail::path_added(), ossia::oscquery::message_type::PathAdded},
       {detail::path_changed(), ossia::oscquery::message_type::PathChanged},
       {detail::path_removed(), ossia::oscquery::message_type::PathRemoved},
-      {detail::attributes_changed(), ossia::oscquery::message_type::AttributesChanged}};
+      {detail::attributes_changed(), ossia::oscquery::message_type::AttributesChanged},
+      {detail::start_osc_streaming(), ossia::oscquery::message_type::StartOscStreaming},
+      {detail::listen(), ossia::oscquery::message_type::Listen},
+      {detail::ignore(), ossia::oscquery::message_type::Ignore}
+  };
   using namespace detail;
 
   auto it = obj.FindMember(detail::command());
@@ -747,11 +753,14 @@ json_parser::message_type(const rapidjson::Value& obj)
       return mt_it.value();
   }
 
+  if (obj.FindMember(detail::attribute_full_path()) != obj.MemberEnd())
   {
-    if (obj.FindMember(detail::attribute_full_path()) != obj.MemberEnd())
-    {
-      return ossia::oscquery::message_type::Namespace;
-    }
+    return ossia::oscquery::message_type::Namespace;
+  }
+
+  if (obj.FindMember(detail::name()) != obj.MemberEnd())
+  {
+    return ossia::oscquery::message_type::HostInfo;
   }
 
   if (obj.FindMember(detail::osc_port()) != obj.MemberEnd())
@@ -760,6 +769,64 @@ json_parser::message_type(const rapidjson::Value& obj)
   }
 
   return ossia::oscquery::message_type::Value; // TODO More checks needed
+}
+
+host_info json_parser::parse_host_info(const rapidjson::Value& doc)
+{
+  host_info info;
+
+
+  if(auto osc_ip = doc.FindMember("OSC_IP"); osc_ip != doc.MemberEnd())
+  {
+    if(osc_ip->value.IsString())
+      info.osc_ip = std::string(osc_ip->value.GetString());
+  }
+  if(auto osc_port = doc.FindMember("OSC_PORT"); osc_port != doc.MemberEnd())
+  {
+    if(osc_port->value.IsInt())
+      info.osc_port = osc_port->value.GetInt();
+  }
+
+  if(auto osc_transport = doc.FindMember("OSC_TRANSPORT"); osc_transport != doc.MemberEnd())
+  {
+    if(osc_transport->value.IsString())
+    {
+      using namespace std::literals;
+      auto str = osc_transport->value.GetString();
+      if(str == "TCP"sv)
+        info.osc_transport = host_info::TCP;
+      else if(str == "UDP"sv)
+        info.osc_transport = host_info::UDP;
+    }
+  }
+  if(auto ws_ip = doc.FindMember("WS_IP"); ws_ip != doc.MemberEnd())
+  {
+    if(ws_ip->value.IsString())
+      info.ws_ip = std::string(ws_ip->value.GetString());
+  }
+  if(auto ws_port = doc.FindMember("WS_PORT"); ws_port != doc.MemberEnd())
+  {
+    if(ws_port->value.IsInt())
+      info.ws_port = ws_port->value.GetInt();
+  }
+
+  if(auto ext = doc.FindMember("EXTENSIONS"); ext != doc.MemberEnd())
+  {
+    if(ext->value.IsObject())
+    {
+      auto exts = ext->value.GetObject();
+      for(auto it = exts.MemberBegin(); it != exts.MemberEnd(); ++it)
+      {
+        if(it->value.IsBool())
+        {
+          bool ok = it->value.GetBool();
+          info.extensions.insert({it->name.GetString(), ok});
+        }
+      }
+    }
+  }
+
+  return info;
 }
 
 void json_parser::parse_namespace(

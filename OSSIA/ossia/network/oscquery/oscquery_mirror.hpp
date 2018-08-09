@@ -103,12 +103,14 @@ private:
   void init();
   using connection_handler = std::weak_ptr<void>;
   bool on_WSMessage(connection_handler hdl, const std::string& message);
+  bool on_BinaryWSMessage(connection_handler hdl, const std::string& message);
   void on_OSCMessage(
       const oscpack::ReceivedMessage& m, const oscpack::IpEndpointName& ip);
 
   void cleanup_connections();
 
   void query_send_message(const std::string& str);
+  void query_send_binary_message(const std::string& str);
   void query_send_message(const rapidjson::StringBuffer& str);
   bool query_connected();
   void query_stop();
@@ -159,6 +161,7 @@ private:
 
   std::unique_ptr<http_client_context> m_http;
   std::atomic_bool m_useHTTP{false};
+  void start_http();
 };
 }
 }

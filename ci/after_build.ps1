@@ -28,14 +28,31 @@ if ( $env:APPVEYOR_BUILD_TYPE -eq "testing" ){
     copy ${env:APPVEYOR_BUILD_FOLDER}\build\OSSIA\Release\ossia.dll ${env:APPVEYOR_BUILD_FOLDER}\build\Tests\Release\
   } else {
     mkdir ${env:APPVEYOR_BUILD_FOLDER}\build\Test\Debug
-    copy ${env:APPVEYOR_BUILD_FOLDER}\build\OSSIA\Debug\ossia.dll ${env:APPVEYOR_BUILD_FOLDER}\build\Tests\Debug\
+    copy ${env:APPVEYOR_BUILD_FOLDER}\build\OSSIA\Debug\ossiad.dll ${env:APPVEYOR_BUILD_FOLDER}\build\Tests\Debug\
   }
+
+  $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\install.log"
+  cmake --build . --config "${env:configuration}" --target install > "$LogFile"
+  CheckLastExitCode
+
+  copy ${env:APPVEYOR_BUILD_FOLDER}\install\Ossia ${env:QTDIR}\QML
+
+  $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\test.log"
+  cmake --build . --config "${env:configuration}" --target RUN_TESTS > "$LogFile"
+  CheckLastExitCode
+
 } elseif ( $env:APPVEYOR_BUILD_TYPE -eq "Release" ){
 
   cd ${env:APPVEYOR_BUILD_FOLDER}\build
   $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\install-${env:APPVEYOR_BUILD_TYPE}-win64.log"
   cmake --build . --config "${env:configuration}" --target install > "$LogFile"
   CheckLastExitCode
+
+  $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\install-debug-win64.log"
+  cmake --build . --config Debug --target install > "$LogFile"
+  CheckLastExitCode
+
+
   cd ${env:APPVEYOR_BUILD_FOLDER}\install
   ls
 
@@ -45,6 +62,11 @@ if ( $env:APPVEYOR_BUILD_TYPE -eq "testing" ){
   $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\install-${env:APPVEYOR_BUILD_TYPE}-win32.log"
   cmake --build . --config "${env:configuration}" --target install > "$LogFile"
   CheckLastExitCode
+
+  $LogFile = "${env:APPVEYOR_BUILD_FOLDER}\install-debug-win32.log"
+  cmake --build . --config Debug --target install > "$LogFile"
+  CheckLastExitCode
+
   cd ${env:APPVEYOR_BUILD_FOLDER}\install-32bit
   ls
 
