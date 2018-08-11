@@ -15,7 +15,9 @@ namespace ossia
 {
 namespace net
 {
-/// Declaration is in osc_fwd.hpp
+
+/*
+/// Because of templates, this has been move into osc_fwd.hpp
 inline void osc_outbound_visitor::operator()(impulse) const
 {
 }
@@ -71,6 +73,8 @@ inline void osc_outbound_visitor::operator()(const std::vector<value>& t) const
 inline void osc_outbound_visitor::operator()() const
 {
 }
+
+*/
 
 
 

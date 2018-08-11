@@ -194,7 +194,7 @@ bool osc_protocol::push_bundle(const std::vector<const parameter_base*>& address
       if (val.valid())
       {
         str << oscpack::BeginMessageN(addr.get_node().osc_address());
-        val.apply(osc_outbound_visitor{str});
+        ossia::apply(osc_outbound_visitor{str}, val, addr.get_unit());
         str << oscpack::EndMessage();
       }
     }
@@ -225,7 +225,7 @@ bool osc_protocol::push_raw_bundle(const std::vector<ossia::net::full_parameter_
       if (val.valid())
       {
         str << oscpack::BeginMessageN(addr.address);
-        val.apply(osc_outbound_visitor{str});
+        ossia::apply(osc_outbound_visitor{str}, val, addr.get_unit());
         str << oscpack::EndMessage();
       }
     }
