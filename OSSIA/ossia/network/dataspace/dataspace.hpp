@@ -272,7 +272,7 @@ typename std::enable_if_t<is_unit<T>::value, bool> operator!=(T, T)
 }
 
 static const constexpr int dataspace_count = 8;
-static const constexpr int unit_count = 2 + 8 + 11 + 4 + 3 + 6 + 6 + 9;
+static const constexpr int unit_count = 2 + 9 + 11 + 4 + 3 + 6 + 6 + 9;
 }
 namespace std
 {
