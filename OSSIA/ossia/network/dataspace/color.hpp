@@ -11,7 +11,7 @@ struct color_unit
 {
   using is_unit = std::true_type;
   using is_multidimensional
-      = std::true_type; // number of dimensiosn -> decltype(value)::size_value
+      = std::true_type; // number of dimensions -> decltype(value)::size_value
   using neutral_unit = rgba8_u;
   using concrete_type = Impl;
   using dataspace_type = color_dataspace;
@@ -318,9 +318,9 @@ struct OSSIA_EXPORT cmyk8_u : public color_unit<cmyk8_u>
     constexpr_return(ossia::make_string_view("cmyk"));
   }
 
-  static constexpr std::array<ossia::string_view, 3> internal_units()
+  static constexpr std::array<ossia::string_view, 4> internal_units()
   {
-    constexpr_return(ossia::make_string_array("none", "none", "none"));
+    constexpr_return(ossia::make_string_array("none", "none", "none", "none"));
   }
 
   using value_type = vec4f;
