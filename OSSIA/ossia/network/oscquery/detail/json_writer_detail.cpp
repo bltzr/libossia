@@ -91,8 +91,10 @@ void json_writer_impl::writeValue(const unit_t& d) const
 {
   auto t = ossia::get_pretty_unit_text(d);
   auto a = get_unit_accessors(d);
+
+  /// TODO: this should be done properly with visitors, but I didn't succeed (see failed experiments in branch feature/unit-xtype-split-internals)
   std::vector<std::string> u;
-  if (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
+  if      (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
   else if (t == "position.cart2D") u={"distance.m", "distance.m"};
   else if (t == "position.spherical") u={"angle.degree", "angle.degree", "distance.m"};
   else if (t == "position.polar") u={"angle.degree", "distance.m"};
@@ -113,7 +115,7 @@ void json_writer_impl::writeValue(const unit_t& d) const
   writer.EndArray();
 
   //write extended_types
-  writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find how)
+  writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find where this is defined)
   if (t == "color.rgba8" )  writer.String("color.rgba8");
   else  {
     writer.StartArray();
