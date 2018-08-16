@@ -87,11 +87,6 @@ void json_writer_impl::writeValue(const domain& d) const
   ossia::apply(domain_to_json{writer}, d);
 }
 
-void json_writer_impl::writeValue(const unit_t& d) const
-{
-  writer.String(ossia::get_pretty_unit_text(d));
-}
-
 void json_writer_impl::writeValue(const net::tags& tags) const
 {
   writer.StartArray();
@@ -115,7 +110,7 @@ void json_writer_impl::writeValue(int32_t i) const
 void json_writer_impl::writeValue(float i) const
 {
   if(!writer.Double(i))
-      writer.Null();
+    writer.Null();
 }
 void json_writer_impl::writeValue(double i) const
 {
@@ -143,39 +138,70 @@ void json_writer_impl::writeValue(const net::instance_bounds& i) const
   writer.EndArray();
 }
 
+void json_writer_impl::writeValue(const unit_t& d) const
+{
+  auto t = get_dataspace_text(d);
+  if ( t == "position" || t == "orientation" || ( t == "color" && get_unit_text(d) != "rgba8" ) )
+    writeComplexValue(d);
+  else writer.String(ossia::get_pretty_unit_text(d));
+}
+
+void json_writer_impl::writeComplexValue(const unit_t& d) const
+{
+  auto t = ossia::get_pretty_unit_text(d);
+  auto a = get_unit_accessors(d);
+  auto u = get_internal_units(d);
+
+  //write units for each member
+  writer.StartArray();
+  for (auto s : u){
+    writer.String(s);
+  }
+  writer.EndArray();
+
+  //write extended_types
+  writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find how)
+  writer.StartArray();
+  for (auto c : a)
+    writer.String(t+'.'+c);
+  writer.EndArray();
+
+}
+
+
 using writer_map_fun
-    = void (*)(const json_writer_impl&, const ossia::net::node_base&);
+  = void (*)(const json_writer_impl&, const ossia::net::node_base&);
 using writer_map_type = string_view_map<writer_map_fun>;
 
 template <typename Attr>
 static auto make_fun_pair()
 {
   return std::make_pair(
-      metadata<Attr>::key(),
-      [](const json_writer_impl& self, const ossia::net::node_base& n) {
-        self.writeValue(Attr::getter(n));
-      });
+        metadata<Attr>::key(),
+        [](const json_writer_impl& self, const ossia::net::node_base& n) {
+    self.writeValue(Attr::getter(n));
+  });
 }
 
 static const auto& attributesMap()
 {
   static const writer_map_type attr_map{[] {
-    writer_map_type attr_impl;
+      writer_map_type attr_impl;
 
-    attr_impl.insert(make_fun_pair<full_path_attribute>());
+      attr_impl.insert(make_fun_pair<full_path_attribute>());
 
-    // Add the "writeValue" function to the map for every attribute
-    ossia::for_each_tagged(base_attributes{}, [&](auto attr) {
-      using type = typename decltype(attr)::type;
-      attr_impl.insert(make_fun_pair<type>());
-    });
-    ossia::for_each_tagged(extended_attributes{}, [&](auto attr) {
-      using type = typename decltype(attr)::type;
-      attr_impl.insert(make_fun_pair<type>());
-    });
+      // Add the "writeValue" function to the map for every attribute
+      ossia::for_each_tagged(base_attributes{}, [&](auto attr) {
+        using type = typename decltype(attr)::type;
+        attr_impl.insert(make_fun_pair<type>());
+      });
+      ossia::for_each_tagged(extended_attributes{}, [&](auto attr) {
+        using type = typename decltype(attr)::type;
+        attr_impl.insert(make_fun_pair<type>());
+      });
 
-    return attr_impl;
-  }()};
+      return attr_impl;
+                                        }()};
 
   return attr_map;
 }
@@ -200,20 +226,20 @@ void json_writer_impl::writeAttribute(
 
 struct node_attribute_writer
 {
-  const net::node_base& n;
-  const json_writer_impl& writer;
+    const net::node_base& n;
+    const json_writer_impl& writer;
 
-  template<typename T>
-  void operator()(const T&)
-  {
-    using Attr = typename T::type;
-    auto res = Attr::getter(n);
-    if (ossia::net::valid(res))
+    template<typename T>
+    void operator()(const T&)
     {
-      writer.writeKey(metadata<Attr>::key());
-      writer.writeValue(res);
+      using Attr = typename T::type;
+      auto res = Attr::getter(n);
+      if (ossia::net::valid(res))
+      {
+        writer.writeKey(metadata<Attr>::key());
+        writer.writeValue(res);
+      }
     }
-  }
 };
 
 void json_writer_impl::writeNodeAttributes(const net::node_base& n) const
@@ -692,9 +718,9 @@ json_writer::paths_removed(const std::vector<std::string>& vec)
 
 json_writer::string_t json_writer::attributes_changed_array(
     const std::
-        vector<std::
-                   pair<const net::node_base*, std::vector<ossia::string_view>>>&
-            vec)
+    vector<std::
+    pair<const net::node_base*, std::vector<ossia::string_view>>>&
+    vec)
 {
   string_t buf;
   writer_t wr(buf);

@@ -40,6 +40,11 @@ ossia::string_view get_unit_accessors(const unit_t& u)
   return ossia::apply(detail::unit_accessor_visitor{}, u.v);
 }
 
+auto get_internal_units(const unit_t& u)
+{
+  return ossia::apply(detail::unit_internal_units_visitor{}, u.v);
+}
+
 std::string get_pretty_unit_text(const unit_t& u)
 {
   using namespace std::literals;

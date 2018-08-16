@@ -24,9 +24,12 @@ struct OSSIA_EXPORT quaternion_u : public orientation_unit<quaternion_u>
   }
   static constexpr auto array_parameters()
   {
-    constexpr_return(ossia::make_string_view("1ijk"));
-  } // TODO find something better than 1 ?
-
+    constexpr_return(ossia::make_string_view("abcd"));
+  } // TODO find something better than 1 ? -> what about this ? since the formula is "a+bi+cj+dk" (was: 1ijk)
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("distance.m", "distance.m", "distance.m", "distance.m"));
+  }
   using value_type = vec4f;
   static constexpr strong_value<neutral_unit>
   to_neutral(strong_value<concrete_type> self)
@@ -51,6 +54,10 @@ struct OSSIA_EXPORT euler_u : public orientation_unit<euler_u>
   {
     constexpr_return(ossia::make_string_view("ypr"));
   }
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("angle.degree", "angle.degree", "angle.degree"));
+  }
 
   using value_type = vec4f;
 
@@ -69,6 +76,10 @@ struct OSSIA_EXPORT axis_u : public orientation_unit<axis_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("xyza"));
+  }
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("distance.m", "distance.m", "distance.m", "angle.degree"));
   }
   using value_type = vec4f;
 

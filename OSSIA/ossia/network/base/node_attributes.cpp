@@ -109,7 +109,7 @@ optional<extended_type> get_extended_type(const ossia::net::node_base& n)
 {
   auto opt = get_optional_attribute<extended_type>(n, text_extended_type());
   if (!opt)
-  {
+  {/*
     if (parameter_base* addr = n.get_parameter())
     {
       switch (addr->get_value_type())
@@ -123,7 +123,7 @@ optional<extended_type> get_extended_type(const ossia::net::node_base& n)
         default:
           break;
       }
-    }
+    }*/
   }
   return opt;
 }

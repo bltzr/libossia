@@ -64,6 +64,16 @@ OSSIA_EXPORT
 char get_unit_accessor(const ossia::unit_t&, uint8_t n);
 
 /**
+ * @brief get_internal_units Return the internal unit of each member of a multi-dimensionnal parameter
+ * @return a std::array of std::strings
+ * e.g. for position.aed, the function returns {"angle.degree", "angle.degree", "distance.m"}.
+ * @note Will return an empty array of strings if no internal untis are present.
+ */
+OSSIA_EXPORT
+auto get_internal_units(const unit_t& u);
+
+
+/**
  * @brief parse_dataspace
  * @param text Something like color, etc.
  *

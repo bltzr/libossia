@@ -412,6 +412,56 @@ struct unit_accessor_visitor
   }
 };
 
+struct unit_internal_units_visitor
+{
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()(const angle_u& dataspace)
+  {
+    return {};
+  }
+  template <std::size_t N>
+  OSSIA_INLINE std::array<ossia::string_view, N> operator()(const color_u& dataspace)
+  {
+    return ossia::apply(*this, dataspace);
+  }
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()(const distance_u& dataspace)
+  {
+    return {};
+  }
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()(const gain_u& dataspace)
+  {
+    return {};
+  }
+  template <std::size_t N>
+  OSSIA_INLINE std::array<ossia::string_view, N> operator()(const position_u& dataspace)
+  {
+    return ossia::apply(*this, dataspace);
+  }
+  template <std::size_t N>
+  OSSIA_INLINE std::array<ossia::string_view, N>  operator()(const orientation_u& dataspace)
+  {
+    return ossia::apply(*this, dataspace);
+  }
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()(const speed_u& dataspace)
+  {
+    return {};
+  }
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()(const timing_u& dataspace)
+  {
+    return {};
+  }
+
+  template <typename Unit, std::size_t N>
+  OSSIA_INLINE std::array<ossia::string_view, N> operator()(Unit)
+  {
+    return Unit::internal_units();
+  }
+
+  OSSIA_INLINE std::array<ossia::string_view, 0> operator()()
+  {
+    return {};
+  }
+};
+
 struct dataspace_text_visitor
 {
   template <typename Dataspace>

@@ -29,6 +29,12 @@ struct OSSIA_EXPORT rgba8_u : public color_unit<rgba8_u>
     constexpr_return(ossia::make_string_view("rgba"));
   }
 
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none", "none"));
+  }
+
+
   using value_type = vec4f;
 
   static constexpr strong_value<neutral_unit>
@@ -56,6 +62,11 @@ struct OSSIA_EXPORT rgba_u : public color_unit<rgba_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("rgba"));
+  }
+
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none", "none"));
   }
 
   using value_type = vec4f;
@@ -88,6 +99,10 @@ struct OSSIA_EXPORT rgb_u : public color_unit<rgb_u>
     constexpr_return(ossia::make_string_view("rgb"));
   }
 
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
   using value_type = vec3f;
 
   static strong_value<neutral_unit>
@@ -116,6 +131,11 @@ struct OSSIA_EXPORT bgr_u : public color_unit<bgr_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("bgr"));
+  }
+
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
   }
 
   using value_type = vec3f;
@@ -148,6 +168,11 @@ struct OSSIA_EXPORT argb_u : public color_unit<argb_u>
     constexpr_return(ossia::make_string_view("argb"));
   }
 
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none", "none"));
+  }
+
   using value_type = vec4f;
 
   static strong_value<neutral_unit>
@@ -178,6 +203,11 @@ struct OSSIA_EXPORT argb8_u : public color_unit<argb8_u>
     constexpr_return(ossia::make_string_view("argb"));
   }
 
+  static constexpr std::array<ossia::string_view, 4> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none", "none"));
+  }
+
   using value_type = vec4f;
 
   static strong_value<neutral_unit>
@@ -205,6 +235,11 @@ struct OSSIA_EXPORT hsv_u : public color_unit<hsv_u>
   {
     constexpr_return(ossia::make_string_view("hsv"));
   }
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
+
 
   using value_type = vec3f;
   static strong_value<neutral_unit>
@@ -225,6 +260,11 @@ struct OSSIA_EXPORT hsl_u : public color_unit<hsl_u>
     constexpr_return(ossia::make_string_view("hsl"));
   }
 
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
+
   using value_type = vec3f;
 };
 
@@ -238,6 +278,11 @@ struct OSSIA_EXPORT cmy8_u : public color_unit<cmy8_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("cmy"));
+  }
+
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
   }
 
   using value_type = vec3f;
@@ -273,6 +318,11 @@ struct OSSIA_EXPORT cmyk8_u : public color_unit<cmyk8_u>
     constexpr_return(ossia::make_string_view("cmyk"));
   }
 
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
+
   using value_type = vec4f;
 };
 
@@ -286,6 +336,11 @@ struct OSSIA_EXPORT xyz_u : public color_unit<xyz_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("xyz"));
+  }
+
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
   }
 
   using value_type = vec3f;
@@ -308,6 +363,11 @@ struct OSSIA_EXPORT yxy_u : public color_unit<yxy_u>
     constexpr_return(ossia::make_string_view("Yxy"));
   }
 
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
+
   using value_type = vec3f;
 };
 
@@ -321,6 +381,11 @@ struct OSSIA_EXPORT hunter_lab_u : public color_unit<hunter_lab_u>
   {
     constexpr_return(ossia::make_string_view("lab"));
   }
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
+
   using value_type = vec3f;
 
   static strong_value<neutral_unit>
@@ -338,6 +403,10 @@ struct OSSIA_EXPORT cie_lab_u : public color_unit<cie_lab_u>
   {
     constexpr_return(ossia::make_string_view("lab"));
   }
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
+  }
   using value_type = vec3f;
 };
 
@@ -350,6 +419,10 @@ struct OSSIA_EXPORT cie_luv_u : public color_unit<cie_luv_u>
   static constexpr auto array_parameters()
   {
     constexpr_return(ossia::make_string_view("luv"));
+  }
+  static constexpr std::array<ossia::string_view, 3> internal_units()
+  {
+    constexpr_return(ossia::make_string_array("none", "none", "none"));
   }
   using value_type = vec3f;
 };
