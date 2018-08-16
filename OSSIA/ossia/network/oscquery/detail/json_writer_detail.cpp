@@ -89,7 +89,22 @@ void json_writer_impl::writeValue(const domain& d) const
 
 void json_writer_impl::writeValue(const unit_t& d) const
 {
-  writer.String(ossia::get_pretty_unit_text(d));
+  auto t = ossia::get_pretty_unit_text(d);
+  auto a = get_unit_accessors(d);
+
+  //write units for each member
+  writer.StartArray();
+  for (auto c : a)
+      writer.String("");
+  writer.EndArray();
+
+  //write extended_types
+  writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find how)
+  writer.StartArray();
+  for (auto c : a)
+    writer.String(t+'.'+c);
+  writer.EndArray();
+
 }
 
 void json_writer_impl::writeValue(const net::tags& tags) const
