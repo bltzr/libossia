@@ -26,7 +26,7 @@ struct OSSIA_EXPORT rgba8_u : public color_unit<rgba8_u>
 
   static constexpr auto array_parameters()
   {
-    constexpr_return(ossia::make_string_view("rgba8"));
+    constexpr_return(ossia::make_string_view("rgba"));
   }
 
   using value_type = vec4f;
