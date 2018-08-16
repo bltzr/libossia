@@ -551,12 +551,12 @@ struct value_prettyprint_visitor
   }
   void operator()(char c) const
   {
-    s << "char: " << c;
+    s << "char: \'" << c << "\'";
   }
   void operator()(std::string str) const
   {
     boost::algorithm::replace_all(str, "\"", "\\\"");
-    s << "string: " << str;
+    s << "string: \"" << str << "\"";
   }
   void operator()(vec2f vec) const
   {
@@ -658,7 +658,7 @@ struct lift_convert
 };
 ossia::value convert(const ossia::value& val, const ossia::value& cur)
 {
-  auto t = cur.getType();
+  auto t = cur.get_type();
   switch(t)
   {
     case ossia::val_type::NONE:

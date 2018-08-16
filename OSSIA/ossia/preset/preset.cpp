@@ -431,23 +431,29 @@ ossia::value json_to_ossia_value(const rapidjson::Value& value)
       switch(N)
       {
         case 2:
-          val = ossia::make_vec(value[0].GetDouble(), value[1].GetDouble());
-          break;
+          if(value[0].IsDouble() && value[1].GetDouble())
+          {
+            return ossia::make_vec(value[0].GetDouble(), value[1].GetDouble());
+          }
         case 3:
-          val = ossia::make_vec(value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble());
-          break;
+          if(value[0].IsDouble() && value[1].GetDouble() && value[2].GetDouble())
+          {
+            return ossia::make_vec(value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble());
+          }
         case 4:
-          val = ossia::make_vec(value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), value[3].GetDouble());
-          break;
+          if(value[0].IsDouble() && value[1].GetDouble() && value[2].GetDouble() && value[3].GetDouble())
+          {
+            return ossia::make_vec(value[0].GetDouble(), value[1].GetDouble(), value[2].GetDouble(), value[3].GetDouble());
+          }
         default:
         {
-          std::vector<ossia::value> v;
-          v.reserve(N);
-          for(std::size_t i = 0; i < N; i++)
+          std::vector<ossia::value> list;
+          list.reserve(N);
+          for(unsigned int i=0; i<N; i++)
           {
-            v.push_back(value[i].GetDouble());
+            list.push_back(json_to_ossia_value(value[i]));
           }
-          val = std::move(v);
+          return list;
         }
       }
       break;
@@ -481,29 +487,8 @@ void explore(
 
     if (jsonval.IsArray())
     {
-      int arrsize = jsonval.Size();
-      bool is_num = true;
-      for (int i = 0; i < arrsize; ++i)
-      {
-        is_num &= jsonval[i].IsNumber();
-        if(!is_num)
-          break;
-      }
-
-      if(!is_num)
-      {
-        for (int i = 0; i < arrsize; ++i)
-        {
-          std::stringstream newroot;
-          newroot << root << "." << i;
-          explore(newroot.str(), jsonval[i], preset);
-        }
-      }
-      else
-      {
-        ossia::presets::preset_pair pp(root, json_to_ossia_value(jsonval));
-        preset->push_back(pp);
-      }
+      ossia::presets::preset_pair pp(root, json_to_ossia_value(jsonval));
+      preset->push_back(pp);
     }
   }
   else
@@ -718,7 +703,7 @@ ossia::presets::write_json(const std::string& devicename, const preset& prst, bo
 std::string ossia_value_to_std_string(const ossia::value& val)
 {
   std::stringstream ss;
-  switch (val.getType())
+  switch (val.get_type())
   {
     case ossia::val_type::BOOL:
       ss << "Bool " << val.get<bool>();
@@ -1008,6 +993,7 @@ const std::string ossia::presets::read_file(
     file.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     file.open(filename);
     buffer << file.rdbuf();
+    file.close();
   }
   return buffer.str();
 }
@@ -1121,7 +1107,7 @@ void apply_preset_node(
           // addresses only on leaf nodes... maybe we should not have this
           // restriction.
           if (keys.empty())
-            newchild->create_parameter(val.getType());
+            newchild->create_parameter(val.get_type());
 
           apply_preset_node(*newchild, keys, val, keeparch, created_nodes, allow_nonterminal);
         }

@@ -44,8 +44,6 @@ struct OSSIA_EXPORT rgba8_u : public color_unit<rgba8_u>
   }
 };
 
-
-
 struct OSSIA_EXPORT rgba_u : public color_unit<rgba_u>
 {
   static constexpr auto text()

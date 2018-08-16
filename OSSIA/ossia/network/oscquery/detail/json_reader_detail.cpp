@@ -694,7 +694,7 @@ void json_parser_impl::readObject(
       if (value_it != obj.MemberEnd())
       {
         auto val = ReadValue(value_it->value);
-        auto addr = node.create_parameter(val.getType());
+        auto addr = node.create_parameter(val.get_type());
         addr->set_value(std::move(val));
       }
 
@@ -707,7 +707,7 @@ void json_parser_impl::readObject(
         }
         else
         {
-          auto addr = node.create_parameter(val.getType());
+          auto addr = node.create_parameter(val.get_type());
           addr->set_value(val);
           ossia::net::set_default_value(node, std::move(val));
         }

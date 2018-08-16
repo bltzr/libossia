@@ -128,6 +128,12 @@ class OSSIA_EXPORT value
      */
     value(const value& v);
     /**
+     * @brief Create a value of type char
+     * @param a char
+     * @see ossia::value
+     */
+    value(char v);
+    /**
      * @brief Create a value of type int
      * @param an int
      * @see ossia::value
@@ -196,6 +202,11 @@ class OSSIA_EXPORT value
      */
     bool is_impulse() const;
     /**
+     * @brief Is the value of type char ?
+     * @return True if the value is a char, false, otherwise
+     */
+    bool is_char() const;
+    /**
      * @brief Is the value of type int ?
      * @return True if the value is an int, false, otherwise
      */
@@ -241,6 +252,11 @@ class OSSIA_EXPORT value
     //     Convertors      //
     //*********************//
 
+    /**
+     * @brief converts the value to a 8-bit character
+     * @return value converted to char
+     */
+    char to_char() const;
     /**
      * @brief converts the value to an int
      * @return value converted to int
@@ -292,6 +308,12 @@ class OSSIA_EXPORT value
      * @return the reference to this value object
      */
     value& operator=(const value& v);
+    /**
+     * @brief operator = assigns with a character
+     * @param v : a char
+     * @return the reference to this value object
+     */
+    value& operator=(char v);
     /**
      * @brief operator = assigns with an integer
      * @param v : an int
@@ -345,6 +367,11 @@ class OSSIA_EXPORT value
      * @brief sets the value as an impulse (a value-less signal)
      */
     void set_impulse();
+    /**
+     * @brief sets the value as a character
+     * @param v int is moved intoto the value object
+     */
+    void set_char(char v);
     /**
      * @brief sets the value as an int
      * @param v int is moved intoto the value object
@@ -555,6 +582,10 @@ class OSSIA_EXPORT node
      * @brief adds an impulse parameter to the current node
      */
     void set_impulse();
+    /**Char: 8-bit value
+     * @brief adds a char parameter to the current node
+     */
+    void set_char();
     /**Integer: 32-bit int.
      * @brief adds an int parameter to the current node
      */
@@ -631,15 +662,15 @@ class OSSIA_EXPORT node
      * @brief adds a vec3f parameter to the current node, with the position.openGL unit (aka X, Y, Z)
      */
     void set_opengl();
-    /**Polar: Polar 2-dimensional position (ie. ad: amplitude, distance)
+    /**Polar: Polar 2-dimensional position (ie. ad: azimuth, distance)
      * @brief adds a vec2f parameter to the current node, with the position.polar unit
      */
     void set_polar();
-    /**Spherical: Polar 3-dimensional position (ie. aed: amplitude, elevation, distance)
+    /**Spherical: Polar 3-dimensional position (ie. aed: azimuth, elevation, distance)
      * @brief adds a vec3f parameter to the current node, with the position.spherical unit (aka aed)
      */
     void set_spherical();
-    /**Cylindrical: Mixed 3-dimensional position (ie. daz: distance, amplitude, Z)
+    /**Cylindrical: Mixed 3-dimensional position (ie. daz: distance, azimuth, Z)
      * @brief adds a vec3f parameter to the current node, with the position.cylindrical unit (aka daz)
      */
     void set_cylindrical();
@@ -698,6 +729,12 @@ class OSSIA_EXPORT node
      * @return the created opp::node object
      */
     node create_impulse(std::string addr);
+    /**Char: 8-bit char.
+     * @brief creates a child node with tne given name, and a char parameter
+     * @param addr: the name of the created node
+     * @return the created opp::node object
+     */
+    node create_char(std::string addr);
     /**Integer: 32-bit int.
      * @brief creates a child node with tne given name, and an int parameter
      * @param addr: the name of the created node
@@ -821,21 +858,21 @@ class OSSIA_EXPORT node
      * @return the created opp::node object
      */
     node create_opengl(std::string addr);
-    /**Polar: Polar 2-dimensional position (ie. ad: amplitude, distance)
+    /**Polar: Polar 2-dimensional position (ie. ad: azimuth, distance)
      * @brief creates a child node with tne given name,
      * and a vec2f parameter with the position.polar unit (aka ad)
      * @param addr: the name of the created node
      * @return the created opp::node object
      */
     node create_polar(std::string addr);
-    /**Spherical: Polar 3-dimensional position (ie. aed: amplitude, elevation, distance)
+    /**Spherical: Polar 3-dimensional position (ie. aed: azimuth, elevation, distance)
      * @brief creates a child node with tne given name,
      * and a vec3f parameter with the position.spherical unit (aka aed)
      * @param addr: the name of the created node
      * @return the created opp::node object
      */
     node create_spherical(std::string addr);
-    /**Cylindrical: Mixed 3-dimensional position (ie. daz: distance, amplitude, Z)
+    /**Cylindrical: Mixed 3-dimensional position (ie. daz: distance, azimuth, Z)
      * @brief creates a child node with tne given name,
      * and a vec3f parameter with the position.cylindrical unit (aka daz)
      * @param addr: the name of the created node
@@ -1110,11 +1147,11 @@ class OSSIA_EXPORT node
      *   + **opengl** (*gl*, *position.gl*):
      * Cartesian 3-dimensional position (ie. X, Y, Z) in the OpenGL coordinate reference system
      *   + **spherical** (*aed*):
-     * Polar 3-dimensional position (ie. aed: amplitude, elevation, distance)
+     * Polar 3-dimensional position (ie. aed: azimuth, elevation, distance)
      *   + **polar** (*ad*):
-     * Polar 2-dimensional position (ie. ad: amplitude, distance)
+     * Polar 2-dimensional position (ie. ad: azimuth, distance)
      *   + **cylindrical** (*daz*):
-     * Mixed 3-dimensional position (ie. daz: distance, amplitude, Z)
+     * Mixed 3-dimensional position (ie. daz: distance, azimuth, Z)
      *
      *
      *
