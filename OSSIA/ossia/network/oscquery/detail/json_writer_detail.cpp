@@ -91,20 +91,36 @@ void json_writer_impl::writeValue(const unit_t& d) const
 {
   auto t = ossia::get_pretty_unit_text(d);
   auto a = get_unit_accessors(d);
+  std::vector<std::string> u;
+  if (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
+  else if (t == "position.cart2D") u={"distance.m", "distance.m"};
+  else if (t == "position.spherical") u={"angle.degree", "angle.degree", "distance.m"};
+  else if (t == "position.polar") u={"angle.degree", "distance.m"};
+  else if (t == "position.openGL") u={"distance.m", "distance.m", "distance.m"};
+  else if (t == "position.cylindrical") u={"angle.degree", "distance.m", "distance.m"};
+  else if (t == "orientation.quaternion") u={"distance.m", "distance.m", "distance.m", "distance.m"};
+  else if (t == "orientation.euler") u={"angle.degree", "angle.degree", "angle.degree"};
+  else if (t == "orientation.axis") u={"distance.m", "distance.m", "distance.m", "angle.degree"};
+  else if (t == "color.rgba" || t == "color.argb" || t == "color.argb8" ) u={"none", "none", "none", "none"};
+  else if (t == "color.rgb" || t == "color.bgr" || t == "color.hsv" || t == "color.cmy8" || t == "color.xyz" ) u={"none", "none", "none"};
+  else if (t == "color.rgba8" ) u={"none"};
+  else u={};
 
   //write units for each member
   writer.StartArray();
-  for (auto c : a)
-      writer.String("");
+  for (auto s : u)
+      writer.String(s);
   writer.EndArray();
 
   //write extended_types
   writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find how)
-  writer.StartArray();
-  for (auto c : a)
-    writer.String(t+'.'+c);
-  writer.EndArray();
-
+  if (t == "color.rgba8" )  writer.String("color.rgba8");
+  else  {
+    writer.StartArray();
+    for (auto c : a)
+      writer.String(t+'.'+c);
+    writer.EndArray();
+  }
 }
 
 void json_writer_impl::writeValue(const net::tags& tags) const
