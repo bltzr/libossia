@@ -544,17 +544,44 @@ void json_parser_impl::readObject(
     auto unit_it = obj.FindMember(detail::attribute_unit());
     if (unit_it != obj.MemberEnd())
     {
-      ossia::unit_t u;
-      ReadValue(unit_it->value, u);
-      if (u)
-        unit = std::move(u);
+      if (unit_it->value.IsString())
+      {
+        ossia::unit_t u;
+        ReadValue(unit_it->value, u);
+        if (u)
+          unit = std::move(u);
+      }
     }
 
     // Look for an extended type
     auto ext_type_it = obj.FindMember(detail::attribute_extended_type());
-    if (ext_type_it != obj.MemberEnd() && ext_type_it->value.IsString())
+    if (ext_type_it != obj.MemberEnd())
     {
-      ext_type = get_string(ext_type_it->value);
+      if (ext_type_it->value.IsString())
+      {
+        ext_type = get_string(ext_type_it->value);
+      }
+      else if (ext_type_it->value.IsArray())
+      {
+        const auto& arr = ext_type_it->value.GetArray();
+        bool b {false};
+        ossia::unit_t u{};
+          for (std::size_t i = 0; i < (std::size_t)arr.Size(); i++)
+          {
+            const rapidjson::Value& elt = arr[i];
+            if (elt.IsString())
+            {
+              auto el = get_string_view(elt);
+              std::string_view us = el.substr(0, el.size()-2);
+              if ( (u = parse_pretty_unit(us)) && (el.back() == get_unit_accessor(u, i) ) )
+                b = true;
+              else b = false;
+            }
+            else b = false;
+          }
+          if (b)
+            unit = u;
+      }
     }
 
     // If any of these exist, we can create a parameter
