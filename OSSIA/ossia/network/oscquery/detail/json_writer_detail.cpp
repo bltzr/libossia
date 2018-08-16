@@ -116,7 +116,7 @@ void json_writer_impl::writeValue(const unit_t& d) const
   if (multi) writer.EndArray();
 
   //write extended_types
-  writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find where this is defined)
+  writeKey(attribute_extended_type());
   if (t == "color.rgba8" )  writer.String("color.rgba8");
   else  {
     writer.StartArray();
