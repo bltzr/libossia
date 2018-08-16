@@ -94,6 +94,7 @@ void json_writer_impl::writeValue(const unit_t& d) const
 
   /// TODO: this should be done properly with visitors, but I didn't succeed (see failed experiments in branch feature/unit-xtype-split-internals)
   std::vector<std::string> u;
+  bool multi{1};
   if      (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
   else if (t == "position.cart2D") u={"distance.m", "distance.m"};
   else if (t == "position.spherical") u={"angle.degree", "angle.degree", "distance.m"};
@@ -105,14 +106,14 @@ void json_writer_impl::writeValue(const unit_t& d) const
   else if (t == "orientation.axis") u={"distance.m", "distance.m", "distance.m", "angle.degree"};
   else if (t == "color.rgba" || t == "color.argb" || t == "color.argb8" ) u={"none", "none", "none", "none"};
   else if (t == "color.rgb" || t == "color.bgr" || t == "color.hsv" || t == "color.cmy8" || t == "color.xyz" ) u={"none", "none", "none"};
-  else if (t == "color.rgba8" ) u={"none"};
-  else u={};
+  else if (t == "color.rgba8" ) {u={"none"}; multi = 0;}
+  else {u={"none"}; multi = 0;}
 
   //write units for each member
-  writer.StartArray();
+  if (multi) writer.StartArray();
   for (auto s : u)
       writer.String(s);
-  writer.EndArray();
+  if (multi) writer.EndArray();
 
   //write extended_types
   writeKey("EXTENDED_TYPE"); /// TODO: do this the right way (couldn't find where this is defined)
