@@ -92,9 +92,11 @@ void json_writer_impl::writeValue(const unit_t& d) const
   auto t = ossia::get_pretty_unit_text(d);
   auto a = get_unit_accessors(d);
 
-  /// TODO: this should be done properly with visitors, but I didn't succeed (see failed experiments in branch feature/unit-xtype-split-internals)
+  /// TODO: this should be done properly with visitors, but I didn't succeed (see json.writer_detail.hpp)
+  // auto u = get_oscquery_internal_units(d);
+
+  // instead of this block below:
   std::vector<std::string> u;
-  bool multi{1};
   if      (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
   else if (t == "position.cart2D") u={"distance.m", "distance.m"};
   else if (t == "position.spherical") u={"angle.degree", "angle.degree", "distance.m"};
@@ -106,19 +108,19 @@ void json_writer_impl::writeValue(const unit_t& d) const
   else if (t == "orientation.axis") u={"distance.m", "distance.m", "distance.m", "angle.degree"};
   else if (t == "color.rgba" || t == "color.argb" || t == "color.argb8" ) u={"none", "none", "none", "none"};
   else if (t == "color.rgb" || t == "color.bgr" || t == "color.hsv" || t == "color.cmy8" || t == "color.xyz" ) u={"none", "none", "none"};
-  else if (t == "color.rgba8" ) {u={"none"}; multi = 0;}
-  else {u={"none"}; multi = 0;}
+  else if (t == "color.rgba8" ) {u={"none"};}
+  else {u={get_pretty_unit_text(d)};}
+  // from there on below  --v--  it can stay the same
 
   //write units for each member
-  if (multi) writer.StartArray();
+  if (u.size()>1) writer.StartArray();
   for (auto s : u)
       writer.String(s);
-  if (multi) writer.EndArray();
+  if (u.size()>1) writer.EndArray();
 
   //write extended_types
-  writeKey(attribute_extended_type());
-  if (t == "color.rgba8" )  writer.String("color.rgba8");
-  else  {
+  if (a!="" && t != "color.rgba8" ) {
+    writeKey(attribute_extended_type());
     writer.StartArray();
     for (auto c : a)
       writer.String(t+'.'+c);

@@ -606,6 +606,8 @@ void json_parser_impl::readObject(
         {
           actual_type = ossia::val_type::STRING;
         }
+        /// TODO: solve the next two cases using types,
+        /// because those EXTENDED_TYPEs are not there any more
         else if (e_type == list_type())
         {
           // nothing to do, but don't remove so that

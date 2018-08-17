@@ -108,6 +108,10 @@ ossia::string_view text_extended_type()
 optional<extended_type> get_extended_type(const ossia::net::node_base& n)
 {
   auto opt = get_optional_attribute<extended_type>(n, text_extended_type());
+  /*
+   * This is not part of OSCQuery's set of accepted EXTENDED_TYPEs, so I'm removing it
+   * TODO: check that this is not missing somewhere in libossia
+   *
   if (!opt)
   {
     if (parameter_base* addr = n.get_parameter())
@@ -125,6 +129,7 @@ optional<extended_type> get_extended_type(const ossia::net::node_base& n)
       }
     }
   }
+  */
   return opt;
 }
 
