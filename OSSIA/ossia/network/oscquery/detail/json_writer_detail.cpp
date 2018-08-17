@@ -754,14 +754,14 @@ std::string osc_writer::send_message(const net::parameter_base& p, const value& 
   {
     oscpack::MessageGenerator<oscquery::osc_outbound_visitor> m;
 
-    auto str = m(p.get_node().osc_address(), v);
+    auto str = m(p.get_node().osc_address(), v, p.get_unit());
     s.assign(str.Data(), str.Size());
   }
   catch (const oscpack::OutOfBufferMemoryException&)
   {
     oscpack::DynamicMessageGenerator<oscquery::osc_outbound_visitor> m;
 
-    auto str = m(p.get_node().osc_address(), v);
+    auto str = m(p.get_node().osc_address(), v, p.get_unit());
     s.assign(str.Data(), str.Size());
   }
 

@@ -107,6 +107,23 @@ private:
   {
   }
 
+  void subfunc(const ossia::value& val, const ossia::unit_t& unit)
+  {
+    //arg1.apply();
+    using namespace ossia::net;
+    if(unit)
+    {
+     ossia::apply_nonnull([&] (const auto& dataspace) {
+       ossia::apply(ValueWriter{p}, val, dataspace);
+     }, unit.v);
+    }
+    else
+    {
+      val.apply([&] (const auto& v) { ValueWriter{p}(v, nullptr); });
+    }
+  }
+
+
   template <typename... Args>
   void subfunc(const ossia::value& arg1, Args&&... args)
   {

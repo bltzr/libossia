@@ -1,5 +1,6 @@
 #pragma once
 #include <ossia/network/value/value.hpp>
+#include <ossia/network/base/parameter.hpp>
 #include <oscpack/osc/OscOutboundPacketStream.h>
 namespace oscpack
 {
@@ -67,12 +68,13 @@ public:
       v += ((uint32_t) vec[3]);
 
       p << int32_t(v);
-      // etc... not sure about the formula / endinanness but you get it
+
     }
 
-  void operator()(vec4f vec, ossia::rgba8_u) {
-      if(value.size() == 4) {
-        if(value[0].getType() == ossia::val_type::INT) // ????? && ... )
+
+  void operator()(const std::vector<value>& vec, ossia::rgba8_u) {
+      if(vec.size() == 4) {
+        if(vec[0].get_type() == ossia::val_type::INT) // ????? && ... )
         {
           uint32_t v = 0;
           v += (uint32_t(vec[0].get<int>())) << 24;
@@ -82,7 +84,7 @@ public:
 
           p << int32_t(v);
         }
-        else if(value[0].getType() == ossia::val_type::FLOAT) // && ... )
+        else if(vec[0].get_type() == ossia::val_type::FLOAT) // && ... )
         {
             uint32_t v = 0;
             v += (uint32_t(vec[0].get<float>())) << 24;
@@ -93,9 +95,11 @@ public:
             p << int32_t(v);
         }
         else
-        { /* just send the values ? there must have been an user error somewhere... */ }
+        { // just send the values ? there must have been an user error somewhere...
+        }
       }
     }
+
 
   template<typename T>
   void operator()(vec4f vec, const T&) const
@@ -104,11 +108,11 @@ public:
   }
 
   template<typename T>
-  void operator()(const std::vector<value>& t, const T&) const
+  void operator()(const std::vector<value>& t, const T& u) const
   {
     for (const auto& val : t)
     {
-      val.apply(*this);
+      val.apply(*this, u);
     }
   }
 
