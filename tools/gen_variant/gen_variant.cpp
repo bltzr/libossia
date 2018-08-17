@@ -46,10 +46,11 @@ template<> struct var_member<ossia::Text> \
 UNIT_VARIANT_DEF(radian)
 UNIT_VARIANT_DEF(degree)
 
-UNIT_VARIANT_DEF(argb)
+UNIT_VARIANT_DEF(rgba8)
 UNIT_VARIANT_DEF(rgba)
 UNIT_VARIANT_DEF(rgb)
 UNIT_VARIANT_DEF(bgr)
+UNIT_VARIANT_DEF(argb)
 UNIT_VARIANT_DEF(argb8)
 UNIT_VARIANT_DEF(hsv)
 UNIT_VARIANT_DEF(cmy8)
