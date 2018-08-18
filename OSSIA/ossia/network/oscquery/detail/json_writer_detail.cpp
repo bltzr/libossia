@@ -91,31 +91,37 @@ void json_writer_impl::writeValue(const unit_t& d) const
 {
   auto t = ossia::get_pretty_unit_text(d);
   auto a = get_unit_accessors(d);
+  string_view dt = t;
 
   /// TODO: this should be done properly with visitors, but I didn't succeed (see json.writer_detail.hpp)
   // auto u = get_oscquery_internal_units(d);
+  /// also add some kind of visitor for "dataspace translations", i.e. position.cartND -> cartesian - also colors"
 
   // instead of this block below:
   std::vector<std::string> u;
-  if      (t == "position.cart3D") u={"distance.m", "distance.m", "distance.m"};
-  else if (t == "position.cart2D") u={"distance.m", "distance.m"};
-  else if (t == "position.spherical") u={"angle.degree", "angle.degree", "distance.m"};
-  else if (t == "position.polar") u={"angle.degree", "distance.m"};
-  else if (t == "position.openGL") u={"distance.m", "distance.m", "distance.m"};
-  else if (t == "position.cylindrical") u={"angle.degree", "distance.m", "distance.m"};
-  else if (t == "orientation.quaternion") u={"distance.m", "distance.m", "distance.m", "distance.m"};
-  else if (t == "orientation.euler") u={"angle.degree", "angle.degree", "angle.degree"};
-  else if (t == "orientation.axis") u={"distance.m", "distance.m", "distance.m", "angle.degree"};
-  else if (t == "color.rgba" || t == "color.argb" || t == "color.argb8" ) u={"none", "none", "none", "none"};
-  else if (t == "color.rgb" || t == "color.bgr" || t == "color.hsv" || t == "color.cmy8" || t == "color.xyz" ) u={"none", "none", "none"};
-  else if (t == "color.rgba8" ) {u={"none"};}
+  if      (t == "position.cart3D") {u={"distance.m", "distance.m", "distance.m"}; dt="position.cartesian";}
+  else if (t == "position.cart2D") {u={"distance.m", "distance.m"}; dt="position.cartesian";}
+  else if (t == "position.spherical") {u={"angle.degree", "angle.degree", "distance.m"};}
+  else if (t == "position.polar") {u={"angle.degree", "distance.m"};}
+  else if (t == "position.openGL") {u={"distance.m", "distance.m", "distance.m"}; dt="position.cartesian";}
+  else if (t == "position.cylindrical") {u={"angle.degree", "distance.m", "distance.m"};}
+  else if (t == "orientation.quaternion") {u={"distance.m", "distance.m", "distance.m", "distance.m"};}
+  else if (t == "orientation.euler") {u={"angle.degree", "angle.degree", "angle.degree"};}
+  else if (t == "orientation.axis") {u={"distance.m", "distance.m", "distance.m", "angle.degree"};}
+  else if (t == "color.rgba" || t == "color.argb" || t == "color.argb8" ) {u={"", "", "", ""};  dt="color.rgba";}
+  else if (t == "color.rgb" || t == "color.bgr" ) {u={"", "", ""};  dt="color.rgba";}
+  else if (t == "color.hsv" ) {u={"", "", ""};  dt="color.hsv";}
+  else if (t == "color.cmy8") {u={"", "", ""};  dt="color.cmyk";}
+  else if (t == "color.xyz" ) {u={"", "", ""};  dt="color.ciexyz";}
+  else if (t == "color.rgba8" ) {u={""};}
   else {u={get_pretty_unit_text(d)};}
   // from there on below  --v--  it can stay the same
 
   //write units for each member
   if (u.size()>1) writer.StartArray();
   for (auto s : u)
-      writer.String(s);
+    if (s!="") writer.String(s);
+    else writer.Null();
   if (u.size()>1) writer.EndArray();
 
   //write extended_types

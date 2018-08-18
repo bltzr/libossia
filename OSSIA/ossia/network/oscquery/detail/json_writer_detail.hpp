@@ -98,31 +98,31 @@ struct json_writer_impl
       return {"distance.m", "distance.m", "distance.m", "angle.degree"};
     }
     std::vector<std::string> operator()(rgba_u u) {
-      return {"none", "none", "none", "none"};
+      return {"", "", "", ""};
     }
     std::vector<std::string> operator()(argb_u u) {
-      return {"none", "none", "none", "none"};
+      return {"", "", "", ""};
     }
     std::vector<std::string> operator()(argb8_u u) {
-      return {"none", "none", "none", "none"};
+      return {"", "", "", ""};
     }
     std::vector<std::string> operator()(rgb_u u) {
-      return {"none", "none", "none"};
+      return {"", "", ""};
     }
     std::vector<std::string> operator()(bgr_u u) {
-      return {"none", "none", "none"};
+      return {"", "", ""};
     }
     std::vector<std::string> operator()(cmy8_u u) {
-      return {"none", "none", "none"};
+      return {"", "", ""};
     }
     std::vector<std::string> operator()(xyz_u u) {
-      return {"none", "none", "none"};
+      return {"", "", ""};
     }
     std::vector<std::string> operator()(rgba8_u u) {
-      return {"none"};
+      return {""};
     }
     std::vector<std::string> operator()() {
-      return {"none"};
+      return {""};
     }
   };
 

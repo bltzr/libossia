@@ -573,7 +573,15 @@ void json_parser_impl::readObject(
             {
               auto el = get_string_view(elt);
               std::string_view us = el.substr(0, el.size()-2);
-              if ( (u = parse_pretty_unit(us)) && (el.back() == get_unit_accessor(u, i) ) )
+              if (us == "position.cartesian" ){
+                if (arr.Size()==3 && (el.back() == get_unit_accessor((u = parse_pretty_unit("position.cart3D")), i) ) ) b = true;
+                else if (arr.Size()==2 && (el.back() == get_unit_accessor((u = parse_pretty_unit("position.cart2D")), i) ) ) b = true;
+              }
+              else if (us == "color.rgb" ) {
+                u = parse_pretty_unit("color.rgba"); b = true;
+                // we should actually do a bunch of things here to find the right color, but... some other day...
+              }
+              else  if ( (u = parse_pretty_unit(us)) && (el.back() == get_unit_accessor(u, i) ) )
                 b = true;
               else b = false;
             }

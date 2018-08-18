@@ -24,7 +24,7 @@ struct OSSIA_EXPORT quaternion_u : public orientation_unit<quaternion_u>
   }
   static constexpr auto array_parameters()
   {
-    constexpr_return(ossia::make_string_view("1ijk"));
+    constexpr_return(ossia::make_string_view("abcd"));
   } // TODO find something better than 1 ?
 
   using value_type = vec4f;
@@ -64,11 +64,11 @@ struct OSSIA_EXPORT axis_u : public orientation_unit<axis_u>
 {
   static constexpr auto text()
   {
-    constexpr_return(ossia::make_string_array("axis", "xyza"));
+    constexpr_return(ossia::make_string_array("axis", "xyzw"));
   }
   static constexpr auto array_parameters()
   {
-    constexpr_return(ossia::make_string_view("xyza"));
+    constexpr_return(ossia::make_string_view("xyzw"));
   }
   using value_type = vec4f;
 
