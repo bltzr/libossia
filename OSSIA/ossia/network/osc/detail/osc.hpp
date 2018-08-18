@@ -219,6 +219,11 @@ struct osc_utilities
         return float{(float)it->AsDoubleUnchecked()};
       case oscpack::CHAR_TYPE_TAG:
         return char{it->AsCharUnchecked()};
+      case oscpack::RGBA_COLOR_TYPE_TAG:{
+        auto c = it->AsRgbaColorUnchecked();
+        return make_vec(uint8_t(c>>24 & 0xFF), uint8_t(c>>16 & 0xFF),
+                        uint8_t(c>>8  & 0xFF), uint8_t(c     & 0xFF));
+      }
       case oscpack::TRUE_TYPE_TAG:
         return bool{true};
       case oscpack::FALSE_TYPE_TAG:
@@ -278,7 +283,15 @@ struct osc_inbound_visitor
 
   ossia::value operator()(int32_t i) const
   {
-    return osc_utilities::get_int(cur_it, i);
+    switch (cur_it->TypeTag()){
+      case oscpack::RGBA_COLOR_TYPE_TAG:{
+        auto c = cur_it->AsRgbaColorUnchecked();
+        return make_vec(uint8_t(c>>24 & 0xFF), uint8_t(c>>16 & 0xFF),
+                        uint8_t(c>>8  & 0xFF), uint8_t(c     & 0xFF));
+      }
+      default:
+        return osc_utilities::get_int(cur_it, i);
+    }
   }
 
   ossia::value operator()(float f) const
@@ -388,7 +401,15 @@ struct osc_inbound_numeric_visitor
 
   ossia::value operator()(int32_t i) const
   {
-    return osc_utilities::get_int(cur_it, i);
+    switch (cur_it->TypeTag()){
+      case oscpack::RGBA_COLOR_TYPE_TAG:{
+        auto c = cur_it->AsRgbaColorUnchecked();
+        return make_vec(uint8_t(c>>24 & 0xFF), uint8_t(c>>16 & 0xFF),
+                        uint8_t(c>>8  & 0xFF), uint8_t(c     & 0xFF));
+      }
+      default:
+        return osc_utilities::get_int(cur_it, i);
+    }
   }
 
   ossia::value operator()(float f) const
